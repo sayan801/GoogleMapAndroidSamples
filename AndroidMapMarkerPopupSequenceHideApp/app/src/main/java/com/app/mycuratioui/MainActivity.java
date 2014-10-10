@@ -1,8 +1,6 @@
-package com.glennsayers.mapapp;
+package com.app.mycuratioui;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,8 +11,6 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;

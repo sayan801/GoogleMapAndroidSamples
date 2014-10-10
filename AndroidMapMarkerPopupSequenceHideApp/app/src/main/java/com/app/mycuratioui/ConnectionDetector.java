@@ -1,4 +1,4 @@
-package com.glennsayers.mapapp;
+package com.app.mycuratioui;
 
 /**
  * Created by technicise on 13/5/14.

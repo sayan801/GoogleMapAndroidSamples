@@ -1,4 +1,4 @@
-package com.glennsayers.mapapp;
+package com.app.mycuratioui;
 
 import android.content.Context;
 import android.util.AttributeSet;
