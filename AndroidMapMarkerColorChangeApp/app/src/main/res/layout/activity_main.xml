@@ -19,8 +19,9 @@
         android:clickable="true"
         android:onClick="showProvider"
         android:background="@android:color/white"
+        android:text="Click Me"
         />
-    <com.glennsayers.mapapp.SlidingDrawer xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.app.mycuratioui.SlidingDrawer xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="fill_parent"
         android:layout_height="0dp"

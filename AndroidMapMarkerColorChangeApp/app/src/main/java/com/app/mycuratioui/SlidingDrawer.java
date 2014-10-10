@@ -1,4 +1,4 @@
-package com.glennsayers.mapapp;
+package com.app.mycuratioui;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -32,25 +32,25 @@ public class SlidingDrawer extends FrameLayout {
 
     public SlidingDrawer(Context context) {
         super(context);
-        LayoutInflater.from(context).inflate(R.layout.sliding_drawer, this, true);
+        LayoutInflater.from(context).inflate(com.app.mycuratioui.R.layout.sliding_drawer, this, true);
     }
 
     public SlidingDrawer(Context context, AttributeSet attrs) {
         super(context, attrs);
-        LayoutInflater.from(context).inflate(R.layout.sliding_drawer, this, true);
+        LayoutInflater.from(context).inflate(com.app.mycuratioui.R.layout.sliding_drawer, this, true);
     }
 
     public SlidingDrawer(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        LayoutInflater.from(context).inflate(R.layout.sliding_drawer, this, true);
+        LayoutInflater.from(context).inflate(com.app.mycuratioui.R.layout.sliding_drawer, this, true);
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        drawer = (LinearLayout)findViewById(R.id.drawer_layout);
+        drawer = (LinearLayout)findViewById(com.app.mycuratioui.R.id.drawer_layout);
 
-        content = findViewById(R.id.drawer_content);
+        content = findViewById(com.app.mycuratioui.R.id.drawer_content);
         MAX_MOVE_VALUE = MainActivity.dip2px(getContext(), 20);
         DRAG_BAR_VALUE = MainActivity.dip2px(getContext(), 35);
         ANIMATION_BOUND_VALUE = MainActivity.dip2px(getContext(), 15);
@@ -90,7 +90,7 @@ public class SlidingDrawer extends FrameLayout {
         boolean isMoved;
         long pressTimeMillis;
 
-        ImageView img1 = (ImageView) findViewById(R.id.slidingImg);
+        ImageView img1 = (ImageView) findViewById(com.app.mycuratioui.R.id.slidingImg);
 
         public LayoutClickListener(int screenW, int screenH) {
             containerWidth = screenW;
@@ -195,7 +195,7 @@ public class SlidingDrawer extends FrameLayout {
             ani.addListener(this);
             ani.start();
 
-            img1.setImageResource(R.drawable.closeicon);
+            img1.setImageResource(com.app.mycuratioui.R.drawable.closeicon);
 
         }
 
@@ -225,7 +225,7 @@ public class SlidingDrawer extends FrameLayout {
             }
             ani.addListener(this);
             ani.start();
-            img1.setImageResource(R.drawable.closeicon);
+            img1.setImageResource(com.app.mycuratioui.R.drawable.closeicon);
         }
 
         private void move2Bottom(int duration){
@@ -243,7 +243,7 @@ public class SlidingDrawer extends FrameLayout {
             }
             ani.addListener(this);
             ani.start();
-            img1.setImageResource(R.drawable.menu);
+            img1.setImageResource(com.app.mycuratioui.R.drawable.menu);
         }
 
 
@@ -254,18 +254,18 @@ public class SlidingDrawer extends FrameLayout {
             if(state == DrawerState.Top){
 //                move2Bottom(MAX_ANIMATION_DURATION);
                 move2Center(MAX_ANIMATION_DURATION,true);
-                img1.setImageResource(R.drawable.closeicon);
+                img1.setImageResource(com.app.mycuratioui.R.drawable.closeicon);
 
             } else if(state == DrawerState.Center){
              // move2Top(MAX_ANIMATION_DURATION, true);
                move2Bottom(MAX_ANIMATION_DURATION);
-                img1.setImageResource(R.drawable.menu);
+                img1.setImageResource(com.app.mycuratioui.R.drawable.menu);
 
             }
             else if(state == DrawerState.Bottom) {
                 move2Top(MAX_ANIMATION_DURATION, true);
                 //move2Bottom(MAX_ANIMATION_DURATION);}
-                img1.setImageResource(R.drawable.closeicon);
+                img1.setImageResource(com.app.mycuratioui.R.drawable.closeicon);
             }
             else {
                 move2Center(MAX_ANIMATION_DURATION, true);

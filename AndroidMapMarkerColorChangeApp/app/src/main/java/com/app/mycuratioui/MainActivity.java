@@ -1,8 +1,6 @@
-package com.glennsayers.mapapp;
+package com.app.mycuratioui;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,8 +11,6 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -119,7 +115,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(com.app.mycuratioui.R.layout.activity_main);
 
         /*
         sharedPrefClassObj = new SharedPreferenceClass(getApplicationContext());
@@ -142,8 +138,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 */
         getJsonURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderByPharmacyZipDistance/72401/5";
         latlonURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
-        searchDescription = (TextView)findViewById(R.id.searchDescription);
-        tvNoOfResults = (TextView)findViewById(R.id.txtNoOfResults);
+        searchDescription = (TextView)findViewById(com.app.mycuratioui.R.id.searchDescription);
+        tvNoOfResults = (TextView)findViewById(com.app.mycuratioui.R.id.txtNoOfResults);
 /*
         String providerSearchLocation = sharedPrefClassObj.getProviderSearchLocation();
         String providerSearchDistance = sharedPrefClassObj.getProviderSearchDistance();
@@ -223,7 +219,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         {
 
             h = new android.os.Handler();
-            pd = new TransparentProgressDialog(this, R.drawable.spinner);
+            pd = new TransparentProgressDialog(this, com.app.mycuratioui.R.drawable.spinner);
             r = new Runnable() {
                 @Override
                 public void run() {
@@ -235,7 +231,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             try
             {
-                map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+                map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(com.app.mycuratioui.R.id.map)).getMap();
                 map.setOnMarkerClickListener(this);
                 map.setPadding(0, 0, 0, 50); //Zoom in-Out Button will be Visisble properly
                 map.clear();
@@ -317,7 +313,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             ShowConnectionStatus();
         }
         //header = (TextView) findViewById(R.id.header);
-        mListView = (ListView) findViewById(R.id.drawer_content);
+        mListView = (ListView) findViewById(com.app.mycuratioui.R.id.drawer_content);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //        footer = (TextView) inflater.inflate(R.layout.footer, null);
 //        mListView.addFooterView(footer);
@@ -359,7 +355,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         mListView.addFooterView(btnLoadMore);
 
-        adapter = new MyAdapter(this, R.layout.list_item_provideronmap);
+        adapter = new MyAdapter(this, com.app.mycuratioui.R.layout.list_item_provideronmap);
         mListView.setAdapter(adapter);
         mListView.setOnScrollListener(this);
 
@@ -376,8 +372,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 try
                 {
                     listItemPotion = i;
-                    addressOfProvider = ((TextView) view.findViewById(R.id.TxtProviderAddress)).getText().toString();
-                    nameOfProvider = ((TextView) view.findViewById(R.id.TxtProviderName)).getText().toString();
+                    addressOfProvider = ((TextView) view.findViewById(com.app.mycuratioui.R.id.TxtProviderAddress)).getText().toString();
+                    nameOfProvider = ((TextView) view.findViewById(com.app.mycuratioui.R.id.TxtProviderName)).getText().toString();
                     zoomProviderAddress = addressOfProvider;
                     zoomProviderName = nameOfProvider;
                     new getProviderInfoByNPIid().execute(addressOfProvider);
@@ -442,7 +438,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         public TransparentProgressDialog(Context context, int resourceIdOfImage)
         {
-            super(context, R.style.TransparentProgressDialog);
+            super(context, com.app.mycuratioui.R.style.TransparentProgressDialog);
             WindowManager.LayoutParams wlmp = getWindow().getAttributes();
             wlmp.gravity = Gravity.CENTER_HORIZONTAL;
             getWindow().setAttributes(wlmp);
@@ -475,13 +471,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     {
         custom_connection_dialog = new Dialog(this, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
-        custom_connection_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(R.style.TransparentProgressDialog));
+        custom_connection_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(com.app.mycuratioui.R.style.TransparentProgressDialog));
         custom_connection_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         custom_connection_dialog.setCancelable(false);
-        custom_connection_dialog.setContentView(R.layout.custom_error_connection);
+        custom_connection_dialog.setContentView(com.app.mycuratioui.R.layout.custom_error_connection);
         custom_connection_dialog.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, Color.parseColor("#FFFFFF"));
 
-        TurnAgain = (Button) custom_connection_dialog.findViewById(R.id.ButtonTryAgain);
+        TurnAgain = (Button) custom_connection_dialog.findViewById(com.app.mycuratioui.R.id.ButtonTryAgain);
         TurnAgain.setOnClickListener(this);
         custom_connection_dialog.show();
 
@@ -492,11 +488,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         switch (view.getId())
         {
 
-            case R.id.ButtonTryAgain:
+            case com.app.mycuratioui.R.id.ButtonTryAgain:
                 custom_connection_dialog.dismiss();
                 break;
 
-            case R.id.ButtonEmailTryAgain:
+            case com.app.mycuratioui.R.id.ButtonEmailTryAgain:
                 Intent doctorActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(doctorActivityIntent);
                 custom_zip_error.dismiss();
@@ -548,7 +544,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         mp.position(new LatLng(providerLatitude, providerLongitude));
                         //if (tmp == 5) tmp = 0;
                         //mp.icon(BitmapDescriptorFactory.fromResource(map_icon[0]));
-                        mp.icon(BitmapDescriptorFactory.fromResource(R.drawable.markerplot));
+                        mp.icon(BitmapDescriptorFactory.fromResource(com.app.mycuratioui.R.drawable.markerplot));
                         mp.title(" "+providerName);
                         mp.snippet(providerAddress+" ");
                         //visibleMarkers.put(loop, mp);
@@ -567,12 +563,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     void errorDialogShow()
     {
         custom_zip_error = new Dialog(MainActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
-        custom_zip_error.getWindow().setBackgroundDrawable(new ColorDrawable(R.style.TransparentProgressDialog));
+        custom_zip_error.getWindow().setBackgroundDrawable(new ColorDrawable(com.app.mycuratioui.R.style.TransparentProgressDialog));
         custom_zip_error.requestWindowFeature(Window.FEATURE_NO_TITLE);
         custom_zip_error.setCancelable(false);
-        custom_zip_error.setContentView(R.layout.custom_error_zip_dialog);
+        custom_zip_error.setContentView(com.app.mycuratioui.R.layout.custom_error_zip_dialog);
         custom_zip_error.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, Color.parseColor("#FFFFFF"));
-        BtnTryAgain = (Button) custom_zip_error.findViewById(R.id.ButtonEmailTryAgain);
+        BtnTryAgain = (Button) custom_zip_error.findViewById(com.app.mycuratioui.R.id.ButtonEmailTryAgain);
         BtnTryAgain.setOnClickListener(this);
         if(pd.isShowing())
             pd.dismiss();
@@ -889,12 +885,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         @Override
         public View getView(int position, View convertView, ViewGroup parent)
         {
-            convertView = inflater.inflate(R.layout.list_item_provideronmap, null);
+            convertView = inflater.inflate(com.app.mycuratioui.R.layout.list_item_provideronmap, null);
 
-            mTextViewSpeciality = (TextView) convertView.findViewById(R.id.TxtSpeciality);
-            mTextViewName = (TextView) convertView.findViewById(R.id.TxtProviderName);
-            mTextViewAddress = (TextView) convertView.findViewById(R.id.TxtProviderAddress);
-            mTextViewNpiId = (TextView) convertView.findViewById(R.id.TxtProviderNPIid);
+            mTextViewSpeciality = (TextView) convertView.findViewById(com.app.mycuratioui.R.id.TxtSpeciality);
+            mTextViewName = (TextView) convertView.findViewById(com.app.mycuratioui.R.id.TxtProviderName);
+            mTextViewAddress = (TextView) convertView.findViewById(com.app.mycuratioui.R.id.TxtProviderAddress);
+            mTextViewNpiId = (TextView) convertView.findViewById(com.app.mycuratioui.R.id.TxtProviderNPIid);
 
             mTextViewSpeciality.setText(mArrayList.get(position).get("speciality" + position));
             mTextViewName.setText(mArrayList.get(position).get("name" + position));
@@ -1093,7 +1089,7 @@ Log.d(" npidata = parse(jObject)", "npidata = parse(jObject)");
                             .title(" " + providerName)
                             .snippet(" " + providerAddress)
                             .icon(BitmapDescriptorFactory
-                                    .fromResource(R.drawable.markerplot)));
+                                    .fromResource(com.app.mycuratioui.R.drawable.markerplot)));
 
                     visibleMarkers.put(loop, marker);
                     Log.d("visibleMarkers object key", String.valueOf(visibleMarkers.get(loop)));
@@ -1121,7 +1117,7 @@ Log.d(" npidata = parse(jObject)", "npidata = parse(jObject)");
                     .title(" "+nameOfProvider)
                     .snippet(" "+zoomProviderAddress)
                     .icon(BitmapDescriptorFactory
-                            .fromResource(R.drawable.markerplotgreen)));
+                            .fromResource(com.app.mycuratioui.R.drawable.markerplotgreen)));
 
             marker.showInfoWindow();
         }
