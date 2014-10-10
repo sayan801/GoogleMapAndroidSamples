@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="150dp"
+    android:layout_gravity="center"
+    android:background="@android:color/white"
+    android:orientation="vertical" >
+
+    <TextView
+
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".75"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="custom_title"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:layout_marginTop="5dp" />
+
+
+    <TextView
+        android:id="@+id/erorText"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".75"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:text="error_zip_dialog"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+
+        />
+
+
+    <Button
+        android:id="@+id/ButtonEmailTryAgain"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.25"
+        android:text="btn_tryagain"
+
+        android:textColor="@android:color/white"
+        android:layout_marginTop="10dp"/>
+
+
+
+</LinearLayout>
+  

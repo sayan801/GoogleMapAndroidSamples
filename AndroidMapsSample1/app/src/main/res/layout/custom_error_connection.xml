@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="150dp"
+    android:layout_gravity="center"
+    android:background="@android:color/white"
+    android:orientation="vertical" >
+
+    <TextView
+
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".75"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:text="custom_title"
+        android:textSize="20sp"
+
+
+        />
+
+    <TextView
+
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".75"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:text="You don't have internet connection"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:layout_marginTop="5dp"
+
+        />
+
+
+    <Button
+        android:id="@+id/ButtonTryAgain"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.25"
+        android:text="tryagain"
+
+        android:layout_marginTop="10dp"
+        android:clickable="true"/>
+
+</LinearLayout>
