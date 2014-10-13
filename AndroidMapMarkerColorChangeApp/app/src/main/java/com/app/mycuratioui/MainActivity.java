@@ -1,6 +1,8 @@
 package com.app.mycuratioui;
 
+import android.app.ActionBar;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,24 +29,29 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.maps.*;
+import com.app.mycuratioui.ConnectionDetector;
+import com.app.mycuratioui.ServiceHandler;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import android.view.View.OnClickListener;
+import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener, GoogleMap.OnMarkerClickListener, AbsListView.OnScrollListener  {
+import com.app.mycuratioui.R;
+
+public class MainActivity extends FragmentActivity implements OnClickListener, GoogleMap.OnMarkerClickListener, AbsListView.OnScrollListener {
+
     /**
      * @param context
      * @param dipValue
@@ -60,6 +68,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     Map<String, String> latLongHashMap = new HashMap<String, String>();
+    ArrayList<HashMap<String, String>> mArrayList = new ArrayList<HashMap<String, String>>();
     ServiceHandler shProvideraddress = new ServiceHandler();
     ////SharedPreferenceClass sharedPrefClassObj;
 
@@ -73,12 +82,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     GoogleMap map;
     protected Context context;
     public  ListView list;
-    ////ApiUrls myApiUrls;
+    //ApiUrls myApiUrls;
 
-    int listviewNoOfRow , totalNoOfResult = 0, j=0, k=0, totalRow, choosePositon = -1, t, listItemPotion,  number = 1, loadMoreData = 0, lastChooseMarker;
+    int listviewNoOfRow , totalNoOfResult = 0, j=0, k=0, totalRow, choosePositon = -1, t, listItemPotion,  number = 1, loadMoreData = 0, lastChooseMarker, rowId;
     // 'k' is just increase latLongHashMap position value 'n' times, j is increment value to 0-4 and after 4 its become again 0 and will continue
     Double providerLatitude = null, providerLongitude = null;
-    ////DatabaseHandler db;
+    //DatabaseHandler db;
 
     private TransparentProgressDialog pd;
     private android.os.Handler h;
@@ -100,8 +109,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
 
     // All variables
-    ArrayList<HashMap<String, String>> mArrayList = new ArrayList<HashMap<String, String>>();
+
     HashMap<Integer, Marker> visibleMarkers = new HashMap<Integer, Marker>();
+    HashMap<Integer, Marker> visibleMarkersGreen = new HashMap<Integer, Marker>();
     private ListView mListView;
     private boolean isloading = false;
     private MyAdapter adapter;
@@ -111,35 +121,32 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private TextView header;
     JSONObject jObject;
     List<HashMap<String, Object>> npidata = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(com.app.mycuratioui.R.layout.activity_main);
-
-        /*
-        sharedPrefClassObj = new SharedPreferenceClass(getApplicationContext());
-
-        ActionBarDynamic actionbardynamic = new ActionBarDynamic();
-        String colorCode="#54D66A";
-        actionbardynamic.DynamicActionBar(getActionBar(), colorCode);
-        ActionBar ab = getActionBar();
-        ab.setCustomView(R.layout.custom_actionbar_layout);
-
-        TextView TvActionbarTitle=(TextView)findViewById(R.id.TvActionBarTitle);
-        TvActionbarTitle.setText("PROVIDERS");
-
-
-        myApiUrls = new ApiUrls();
-        latlonURL = myApiUrls.getLatLongFromAddress.toString();
-        distance = sharedPrefClassObj.getDistance().toString();
-        userInputtedZip = sharedPrefClassObj.getProviderSearchLocation().toString();
-        txonomyUrl = myApiUrls.getTaxonomyDetails.toString();
-*/
+//        sharedPrefClassObj = new SharedPreferenceClass(getApplicationContext());
+//
+//        ActionBarDynamic actionbardynamic = new ActionBarDynamic();
+//        String colorCode="#54D66A";
+//        actionbardynamic.DynamicActionBar(getActionBar(), colorCode);
+//        ActionBar ab = getActionBar();
+//        ab.setCustomView(R.layout.custom_actionbar_layout);
+//
+//        TextView TvActionbarTitle=(TextView)findViewById(R.id.TvActionBarTitle);
+//        TvActionbarTitle.setText("PROVIDERS");
         getJsonURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderByPharmacyZipDistance/72401/5";
         latlonURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
-        searchDescription = (TextView)findViewById(com.app.mycuratioui.R.id.searchDescription);
-        tvNoOfResults = (TextView)findViewById(com.app.mycuratioui.R.id.txtNoOfResults);
+//        myApiUrls = new ApiUrls();
+//        latlonURL = myApiUrls.getLatLongFromAddress.toString();
+//        distance = sharedPrefClassObj.getDistance().toString();
+//        userInputtedZip = sharedPrefClassObj.getProviderSearchLocation().toString();
+//        txonomyUrl = myApiUrls.getTaxonomyDetails.toString();
+
+        searchDescription = (TextView)findViewById(R.id.searchDescription);
+        tvNoOfResults = (TextView)findViewById(R.id.txtNoOfResults);
 /*
         String providerSearchLocation = sharedPrefClassObj.getProviderSearchLocation();
         String providerSearchDistance = sharedPrefClassObj.getProviderSearchDistance();
@@ -204,11 +211,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
 
         searchDescription.setText(Html.fromHtml("Searching for <b>"+providerTV+"</b> Within <b>"+providerSearchDistance+ "</b> of <b>"+providerSearchLocation+"</b> :"));
+*/
 
-
-        db = new DatabaseHandler(this);
-        // creating connection detector class instance
-        */
+        //// db = new DatabaseHandler(this);
         // creating connection detector class instance
         cd = new ConnectionDetector(getApplicationContext());
         // get Internet status
@@ -219,7 +224,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         {
 
             h = new android.os.Handler();
-            pd = new TransparentProgressDialog(this, com.app.mycuratioui.R.drawable.spinner);
+            pd = new TransparentProgressDialog(this, R.drawable.spinner);
             r = new Runnable() {
                 @Override
                 public void run() {
@@ -231,19 +236,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             try
             {
-                map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(com.app.mycuratioui.R.id.map)).getMap();
+                map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
                 map.setOnMarkerClickListener(this);
                 map.setPadding(0, 0, 0, 50); //Zoom in-Out Button will be Visisble properly
                 map.clear();
-
-/*                //ListViewLoaderTask listViewLoaderTask = new ListViewLoaderTask();
-
+/*
                 if (sharedPrefClassObj.getProviderSearchType().toString().equals("name"))
                 {
                     String providerName = sharedPrefClassObj.getProviderNameSearchTerm().toString();
                     providerName = providerName.replace(" ", "+");
                     String urlValue = myApiUrls.getProviderInfoByPartialNameZipDistance.toString() + providerName + "/" + userInputtedZip + "/" + distance;
-                    //listViewLoaderTask.execute(nameURL);
                     getJsonURL = urlValue;
                 }
                 else if (sharedPrefClassObj.getProviderSearchType().toString().equals("hospital"))
@@ -251,7 +253,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
                     String hopitalURL = myApiUrls.getProviderHospitalByZipDistance.toString();
                     String urlValue = hopitalURL + userInputtedZip + "/" + distance;
-                    //listViewLoaderTask.execute(strUrlhospital);
                     getJsonURL = urlValue;
 
                 }
@@ -259,7 +260,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 {
                     String pharmacyURL = myApiUrls.getProviderPharmacyByZipDistance.toString();
                     String urlValue = pharmacyURL + userInputtedZip + "/" + distance;
-                    //listViewLoaderTask.execute(strUrlpharmacy);
                     getJsonURL = urlValue;
 
                 }
@@ -271,14 +271,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         EmergencyURL = myApiUrls.getProviderInfoByEmergencyUrgentCareZip.toString();
                         String urlValue = EmergencyURL + "/" + emergencyTaxcode + "/" + userInputtedZip + "/" + distance;
                         getJsonURL = urlValue;
-                        //listViewLoaderTask.execute(urlValue);
                     }
                     else if (sharedPrefClassObj.getEmergencyorUrgentcare().toString().equals("urgentcare"))
                     {
                         EmergencyURL = myApiUrls.getProviderInfoByEmergencyUrgentCareZip.toString();
                         emergencyTaxcode = "261QU0200X";
                         String urlValue = EmergencyURL + "/" + emergencyTaxcode + "/" + userInputtedZip + "/" + distance;
-                        //listViewLoaderTask.execute(urlValue);
                         getJsonURL = urlValue;
                     }
                     else
@@ -287,7 +285,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         EmergencyURL = myApiUrls.getProviderInfoByEmergencyUrgentCareZip.toString();
                         emergencyTaxcode = "-1";
                         String urlValue = EmergencyURL + "/" + emergencyTaxcode + "/" + userInputtedZip + "/" + distance;
-                        //listViewLoaderTask.execute(urlValue);
                         getJsonURL = urlValue;
 
                     }
@@ -296,11 +293,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     specialityTaxcode = sharedPrefClassObj.getProviderType().toString();
                     specialityURL = myApiUrls.getProviderInfoBySpecialityZipDistance.toString();
                     String urlValue = specialityURL + "/" + specialityTaxcode + "/" + userInputtedZip + "/" + distance;
-                    //listViewLoaderTask.execute(urlValue);
                     getJsonURL = urlValue;
                 }
 */
-                //listViewLoaderTask.execute();
             }
             catch (Exception e)
             {
@@ -312,12 +307,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         {
             ShowConnectionStatus();
         }
-        //header = (TextView) findViewById(R.id.header);
-        mListView = (ListView) findViewById(com.app.mycuratioui.R.id.drawer_content);
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        footer = (TextView) inflater.inflate(R.layout.footer, null);
-//        mListView.addFooterView(footer);
-
+        mListView = (ListView) findViewById(R.id.drawer_content);
         // LoadMore button
         Button btnLoadMore = new Button(this);
         btnLoadMore.setText("Show More Providers");
@@ -355,7 +345,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         mListView.addFooterView(btnLoadMore);
 
-        adapter = new MyAdapter(this, com.app.mycuratioui.R.layout.list_item_provideronmap);
+        adapter = new MyAdapter(this, R.layout.list_item_provideronmap);
         mListView.setAdapter(adapter);
         mListView.setOnScrollListener(this);
 
@@ -372,61 +362,69 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 try
                 {
                     listItemPotion = i;
-                    addressOfProvider = ((TextView) view.findViewById(com.app.mycuratioui.R.id.TxtProviderAddress)).getText().toString();
-                    nameOfProvider = ((TextView) view.findViewById(com.app.mycuratioui.R.id.TxtProviderName)).getText().toString();
+                    addressOfProvider = ((TextView) view.findViewById(R.id.TxtProviderAddress)).getText().toString();
+                    nameOfProvider = ((TextView) view.findViewById(R.id.TxtProviderName)).getText().toString();
                     zoomProviderAddress = addressOfProvider;
                     zoomProviderName = nameOfProvider;
-                    new getProviderInfoByNPIid().execute(addressOfProvider);
+                    plotAprovier(i); //call-back method for plot a Single provier on Map..
                 }catch (Exception excp)
                 {
                     //
                 }
             }
         });
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
-        {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l)
-            {
-                try
-                {/*
-                    npiIDOfProvider = ((TextView) view.findViewById(R.id.TxtProviderNPIid)).getText().toString();
-                    nameOfProvider = ((TextView) view.findViewById(R.id.TxtProviderName)).getText().toString();
-                    Intent intentDoctorDetails = new Intent(getApplicationContext(), DoctorDetails.class);
-                    sharedPrefClassObj.setProviderName(nameOfProvider);
-                    sharedPrefClassObj.setProviderNPIid(npiIDOfProvider);
-                    startActivity(intentDoctorDetails);*/
-                }
-                catch (Exception e)
-                {
-                    //
-                }
-                return false;
-            }
-        });
+//        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+//        {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l)
+//            {
+//                try
+//                {
+//                    npiIDOfProvider = ((TextView) view.findViewById(R.id.TxtProviderNPIid)).getText().toString();
+//                    nameOfProvider = ((TextView) view.findViewById(R.id.TxtProviderName)).getText().toString();
+//                    Intent intentDoctorDetails = new Intent(getApplicationContext(), DoctorDetails.class);
+//                    sharedPrefClassObj.setProviderName(nameOfProvider);
+//                    sharedPrefClassObj.setProviderNPIid(npiIDOfProvider);
+//                    startActivity(intentDoctorDetails);
+//                }
+//                catch (Exception e)
+//                {
+//                    //
+//                }
+//                return false;
+//            }
+//        });
     }
 
 
     @Override
     public boolean onMarkerClick(Marker marker)
     {
-        // Show the info window
-        marker.showInfoWindow();
-//        String[] separated =  marker.getTitle().split(" ");
-//        String data = separated[0];
-//        data = data.replace("(","");
-//        data = data.replace(")","");
-//        final String position = data;
-//
-//        mListView.post(new Runnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                mListView.smoothScrollToPositionFromTop(Integer.parseInt(position)-1,Integer.parseInt(position)-1);
-//            }
-//        });
+        try
+        {
+            // Show the info window
+            marker.showInfoWindow();
+            String[] separated =  marker.getTitle().split(" ");
+            String data = separated[0];
+            final String position = data;
 
+            mListView.post(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    //auto-Scroll the ListView position
+                    mListView.smoothScrollToPositionFromTop(Integer.parseInt(position)-1,Integer.parseInt(position)-1);
+
+                    //programatically click on ListView row Item for corresponding marker Click
+                    mListView.performItemClick(mListView.getAdapter().getView(Integer.parseInt(position), null, null), Integer.parseInt(position), mListView.getItemIdAtPosition(Integer.parseInt(position)));
+                }
+            });
+        }
+        catch (Exception excepMarker)
+        {
+
+        }
         // Event was handled by our code do not launch default behaviour.
         return true;
     }
@@ -438,7 +436,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         public TransparentProgressDialog(Context context, int resourceIdOfImage)
         {
-            super(context, com.app.mycuratioui.R.style.TransparentProgressDialog);
+            super(context, R.style.TransparentProgressDialog);
             WindowManager.LayoutParams wlmp = getWindow().getAttributes();
             wlmp.gravity = Gravity.CENTER_HORIZONTAL;
             getWindow().setAttributes(wlmp);
@@ -471,13 +469,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     {
         custom_connection_dialog = new Dialog(this, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
-        custom_connection_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(com.app.mycuratioui.R.style.TransparentProgressDialog));
+        custom_connection_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(R.style.TransparentProgressDialog));
         custom_connection_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         custom_connection_dialog.setCancelable(false);
-        custom_connection_dialog.setContentView(com.app.mycuratioui.R.layout.custom_error_connection);
+        custom_connection_dialog.setContentView(R.layout.custom_error_connection);
         custom_connection_dialog.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, Color.parseColor("#FFFFFF"));
 
-        TurnAgain = (Button) custom_connection_dialog.findViewById(com.app.mycuratioui.R.id.ButtonTryAgain);
+        TurnAgain = (Button) custom_connection_dialog.findViewById(R.id.ButtonTryAgain);
         TurnAgain.setOnClickListener(this);
         custom_connection_dialog.show();
 
@@ -488,11 +486,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         switch (view.getId())
         {
 
-            case com.app.mycuratioui.R.id.ButtonTryAgain:
+            case R.id.ButtonTryAgain:
                 custom_connection_dialog.dismiss();
                 break;
 
-            case com.app.mycuratioui.R.id.ButtonEmailTryAgain:
+            case R.id.ButtonEmailTryAgain:
                 Intent doctorActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(doctorActivityIntent);
                 custom_zip_error.dismiss();
@@ -500,75 +498,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
-    private class markProviderLocationOnMap extends AsyncTask<Void, Void, Void>
-    {
-        @Override
-        protected Void doInBackground(Void... arg0)
-        {
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result)
-        {
-            super.onPostExecute(result);
-            Log.d("markProviderLocationOnMap latLongHashMap.size()", String.valueOf(latLongHashMap.size()));
-            //execute Map Plotting
-            if (latLongHashMap.size() > 0)
-            {
-                MarkerOptions mp = new MarkerOptions();
-                mp.flat(true);
-                boolean markerPlot =false;
-                for (int loop = 0; loop < latLongHashMap.size() / 4; loop++)
-                {
-                    if (providerLatitude.equals(null) || providerLongitude.equals(null))
-                    {
-                        //lat long not Found...
-                    }
-                    else
-                    {
-                        providerLatitude = Double.valueOf(latLongHashMap.get("latitude" + loop));
-                        providerLongitude = Double.valueOf(latLongHashMap.get("longitude" + loop));
-
-                        if(markerPlot == false)
-                        {
-                            pd.dismiss();
-                            //(Math.abs(marker.getPosition().latitude - latLng.latitude)
-                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 12));
-                            markerPlot = true;
-                        }
-                        providerName = latLongHashMap.get("name" + loop);
-                        providerAddress = latLongHashMap.get("address" + loop);
-
-                        mp.position(new LatLng(providerLatitude, providerLongitude));
-                        //if (tmp == 5) tmp = 0;
-                        //mp.icon(BitmapDescriptorFactory.fromResource(map_icon[0]));
-                        mp.icon(BitmapDescriptorFactory.fromResource(com.app.mycuratioui.R.drawable.markerplot));
-                        mp.title(" "+providerName);
-                        mp.snippet(providerAddress+" ");
-                        //visibleMarkers.put(loop, mp);
-                        map.addMarker(mp);
-                    }
-                }
-            }
-            else
-            {
-                ////errorDialogShow();
-            }
-        }
-
-    }
-
     void errorDialogShow()
     {
         custom_zip_error = new Dialog(MainActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
-        custom_zip_error.getWindow().setBackgroundDrawable(new ColorDrawable(com.app.mycuratioui.R.style.TransparentProgressDialog));
+        custom_zip_error.getWindow().setBackgroundDrawable(new ColorDrawable(R.style.TransparentProgressDialog));
         custom_zip_error.requestWindowFeature(Window.FEATURE_NO_TITLE);
         custom_zip_error.setCancelable(false);
-        custom_zip_error.setContentView(com.app.mycuratioui.R.layout.custom_error_zip_dialog);
+        custom_zip_error.setContentView(R.layout.custom_error_zip_dialog);
         custom_zip_error.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, Color.parseColor("#FFFFFF"));
-        BtnTryAgain = (Button) custom_zip_error.findViewById(com.app.mycuratioui.R.id.ButtonEmailTryAgain);
+        BtnTryAgain = (Button) custom_zip_error.findViewById(R.id.ButtonEmailTryAgain);
         BtnTryAgain.setOnClickListener(this);
         if(pd.isShowing())
             pd.dismiss();
@@ -654,7 +592,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     {
 
         HashMap<String, Object> provider = new HashMap<String, Object>();
-        try {
+        try
+        {
             if(c.has("NPI"))
             {
                 npiID = c.getString("NPI");
@@ -838,7 +777,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 latLongHashMap.put("name" + k, providerName);
                 latLongHashMap.put("address" + k, npiProvideraddress.replace("+", " "));
                 k++;
-                Log.d("providerLatitude", String.valueOf(providerLatitude));
+                //Log.d("providerLatitude", String.valueOf(providerLatitude));
             }
 
 //            if(!HealthcareProviderTaxonomyCode_1.isEmpty())
@@ -885,12 +824,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         @Override
         public View getView(int position, View convertView, ViewGroup parent)
         {
-            convertView = inflater.inflate(com.app.mycuratioui.R.layout.list_item_provideronmap, null);
+            convertView = inflater.inflate(R.layout.list_item_provideronmap, null);
 
-            mTextViewSpeciality = (TextView) convertView.findViewById(com.app.mycuratioui.R.id.TxtSpeciality);
-            mTextViewName = (TextView) convertView.findViewById(com.app.mycuratioui.R.id.TxtProviderName);
-            mTextViewAddress = (TextView) convertView.findViewById(com.app.mycuratioui.R.id.TxtProviderAddress);
-            mTextViewNpiId = (TextView) convertView.findViewById(com.app.mycuratioui.R.id.TxtProviderNPIid);
+            mTextViewSpeciality = (TextView) convertView.findViewById(R.id.TxtSpeciality);
+            mTextViewName = (TextView) convertView.findViewById(R.id.TxtProviderName);
+            mTextViewAddress = (TextView) convertView.findViewById(R.id.TxtProviderAddress);
+            mTextViewNpiId = (TextView) convertView.findViewById(R.id.TxtProviderNPIid);
 
             mTextViewSpeciality.setText(mArrayList.get(position).get("speciality" + position));
             mTextViewName.setText(mArrayList.get(position).get("name" + position));
@@ -944,7 +883,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             {
                 jObject = new JSONObject(strJson);
                 npidata = parse(jObject);
-Log.d(" npidata = parse(jObject)", "npidata = parse(jObject)");
+
             }
             catch (Exception ex)
             {
@@ -955,7 +894,8 @@ Log.d(" npidata = parse(jObject)", "npidata = parse(jObject)");
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Void result)
+        {
             if (totalNoOfResult > 0)
             {
                 //new markProviderLocationOnMap().execute();
@@ -975,82 +915,50 @@ Log.d(" npidata = parse(jObject)", "npidata = parse(jObject)");
 
         }
     }
-    //execute a Asyntask plot Particular provider on Map
-    private class getProviderInfoByNPIid extends AsyncTask<String, Void, Void>
+
+    public  void  plotAprovier(int RowId)
     {
-        JSONObject jObject;
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
+        // '111' is hard-coded value for last green marker object/value
 
-            if(pd.isShowing())
-                pd.show();
-            else
-                pd.show();
-        }
+           if(visibleMarkersGreen.size() > 0)
+           {
+               visibleMarkersGreen.get(111).remove();
+           }
 
-        @Override
-        protected Void doInBackground(String... arg0)
-        {
-            npiProvideraddress = arg0[0];
-            try
+            if(visibleMarkers.size() > 0)
             {
-                getLatLongFromAddressURL = latlonURL + npiProvideraddress;
-                jsonStrServiceCall = shProvideraddress.makeServiceCall(getLatLongFromAddressURL, ServiceHandler.GET);
-                jsObject = new JSONObject(jsonStrServiceCall);
-                latlngArry = jsObject.getJSONArray("result");
-
-
-                jsonObject = latlngArry.getJSONObject(0);
-                urlStatus = jsonObject.getString("status");
-
-                if(urlStatus.equals("OK"))
+                for(int m=0; m<visibleMarkers.size(); m++)
                 {
-                    providerLatitude = jsonObject.getDouble("latitude");
-                    providerLongitude = jsonObject.getDouble("longitude");
+                    visibleMarkers.get(m).setVisible(true); //black marker
                 }
-                else
-                {
-                    providerLatitude = null ;
-                    providerLongitude = null;
-                }
-
             }
-            catch (Exception e)
-            {
-                //e.printStackTrace();
-            }
+            visibleMarkers.get(RowId).setVisible(false); //black marker
 
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void result)
-        {
-            super.onPostExecute(result);
-            try
-            {
-                MarkerOptions mp = new MarkerOptions();
+            providerLatitude = Double.valueOf(latLongHashMap.get("latitude" + RowId));
+            providerLongitude = Double.valueOf(latLongHashMap.get("longitude" + RowId));
 
-                if(pd.isShowing())
-                    pd.dismiss();
+            providerName = latLongHashMap.get("name" + RowId);
+            providerAddress = latLongHashMap.get("address" + RowId);
+
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(providerLatitude - 0.004, providerLongitude + 0.001), 12)); //15
+
+            Marker marker = map.addMarker(new MarkerOptions()
+                    .position(new LatLng(providerLatitude, providerLongitude))
+                    .title(RowId + " . " + providerName)
+                    .snippet(" " + providerAddress)
+                    .icon(BitmapDescriptorFactory
+                            .fromResource(R.drawable.markerplotgreen)));
+            // '111' is hard-coded value for last green marker object/value
+            visibleMarkersGreen.put(111, marker);
+            marker.showInfoWindow();
 
 
-
-            }
-            catch (Exception excep)
-            {
-                //
-            }
-            plotAprovier();
-        }
     }
     public void markProviderLocationOnMap1()
     {
         if (latLongHashMap.size() > 0)
         {
-            Marker mp = null;// = new MarkerOptions();
-            //mp.flat(true);
             boolean markerPlot =false;
             for (int loop = 0; loop < latLongHashMap.size() / 4; loop++)
             {
@@ -1066,7 +974,6 @@ Log.d(" npidata = parse(jObject)", "npidata = parse(jObject)");
                     if(markerPlot == false)
                     {
                         pd.dismiss();
-                        //(Math.abs(marker.getPosition().latitude - latLng.latitude)
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                 new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 12));
                         markerPlot = true;
@@ -1074,25 +981,15 @@ Log.d(" npidata = parse(jObject)", "npidata = parse(jObject)");
                     providerName = latLongHashMap.get("name" + loop);
                     providerAddress = latLongHashMap.get("address" + loop);
 
-//                    mp.position(new LatLng(providerLatitude, providerLongitude));
-//                    //if (tmp == 5) tmp = 0;
-//                    //mp.icon(BitmapDescriptorFactory.fromResource(map_icon[0]));
-//                    mp.icon(BitmapDescriptorFactory.fromResource(R.drawable.markerplot));
-//                    mp.title(" "+providerName);
-//                    mp.snippet(providerAddress+" ");
-//
-//                    Log.d("visibleMarkers object key", String.valueOf(visibleMarkers.get(loop)));
-//                    map.addMarker(mp);
-
                     Marker marker = map.addMarker(new MarkerOptions()
                             .position(new LatLng(providerLatitude, providerLongitude))
-                            .title(" " + providerName)
+                            .title(loop + " . " + providerName)
                             .snippet(" " + providerAddress)
                             .icon(BitmapDescriptorFactory
-                                    .fromResource(com.app.mycuratioui.R.drawable.markerplot)));
+                                    .fromResource(R.drawable.markerplot)));
 
                     visibleMarkers.put(loop, marker);
-                    Log.d("visibleMarkers object key", String.valueOf(visibleMarkers.get(loop)));
+                    //Log.d("visibleMarkers object key", String.valueOf(visibleMarkers.get(loop)));
                 }
             }
         }
@@ -1101,34 +998,10 @@ Log.d(" npidata = parse(jObject)", "npidata = parse(jObject)");
             ////errorDialogShow();
         }
     }
-    public  void  plotAprovier()
-    {
-        if(providerLatitude != null && providerLongitude != null)
-        {
-
-            visibleMarkers.get(listItemPotion).setVisible(false);
-            lastChooseMarker = listItemPotion;
-
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(providerLatitude - 0.004, providerLongitude + 0.001), 15));
-            //delete the existing marker with this Lat. Long
-            Marker marker = map.addMarker(new MarkerOptions()
-                    .position(new LatLng(providerLatitude, providerLongitude))
-                    .title(" "+nameOfProvider)
-                    .snippet(" "+zoomProviderAddress)
-                    .icon(BitmapDescriptorFactory
-                            .fromResource(com.app.mycuratioui.R.drawable.markerplotgreen)));
-
-            marker.showInfoWindow();
-        }
-        else
-        {
-            //Toast.makeText(getApplicationContext(), "This Address Not Available", Toast.LENGTH_SHORT).show();
-        }
-    }
     public void showProvider(View view)
     {
         getJsonURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderByPharmacyZipDistance/72401/5";
+        //getJsonURL= "http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByEmergencyUrgentCareZip/-1/16601/10";
         task = new MyTask();
         task.execute();
 
