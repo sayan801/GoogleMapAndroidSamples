@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="livesdk">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/livesdk.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tab"
+    android:layout_width="fill_parent"
+    android:layout_height="75dp"
+    android:layout_gravity="left"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/tabLabel"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:gravity="center_horizontal"
+        android:textColor="#FFF"
+        android:textSize="14sp" />
+    <TextView
+        android:id="@+id/tabLabel2"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:gravity="center_horizontal"
+        android:textColor="#FFF"
+        android:textSize="14sp" />
+    <TextView
+        android:id="@+id/tabLabel3"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:gravity="center_horizontal"
+        android:textColor="#FFF"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tabSelectedDivider"
+        android:layout_width="fill_parent"
+        android:layout_height="5dp"
+        android:layout_alignParentBottom="true"
+        android:background="#54D66A"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tabDivider"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_alignParentBottom="true"
+        android:background="#54D66A" />
+
+    <TextView
+        android:id="@+id/tabSplitter"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/transparent" />
+
+
+
+</RelativeLayout>

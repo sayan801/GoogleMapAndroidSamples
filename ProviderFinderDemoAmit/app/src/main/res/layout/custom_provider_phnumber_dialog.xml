@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="175dp"
+    android:layout_gravity="center"
+    android:background="@android:color/white"
+    android:orientation="vertical" >
+
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".75"
+        android:layout_gravity="center"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:text="@string/prover_phnumber"
+        android:textSize="20sp"
+        />
+
+
+    <TextView
+        android:id="@+id/phNumber"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".50"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:layout_marginTop="2dp"
+
+        />
+
+
+    <Button
+        android:id="@+id/BtnCalling"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.25"
+        android:text="@string/btn_calling"
+
+        android:layout_marginTop="5dp"
+        android:clickable="true"/>
+
+
+    <Button
+        android:id="@+id/ButtonCancel"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.25"
+        android:text="cancel"
+
+        android:clickable="true"/>
+
+
+</LinearLayout>
+  
