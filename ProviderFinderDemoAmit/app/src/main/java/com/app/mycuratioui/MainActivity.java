@@ -871,7 +871,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, G
                 npiProvideraddress="addressnotfound";
 
             getLatLongFromAddressURL = latlonURL + npiProvideraddress;
-/*            jsonStrServiceCall = shProvideraddress.makeServiceCall(getLatLongFromAddressURL, ServiceHandler.GET);
+            jsonStrServiceCall = shProvideraddress.makeServiceCall(getLatLongFromAddressURL, ServiceHandler.GET);
 
             jsObject = new JSONObject(jsonStrServiceCall);
             latlngArry = jsObject.getJSONArray("result");
@@ -887,10 +887,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener, G
                 latLongHashMap.put("longitude" + k, providerLongitude.toString());
             }
             else
-            {*/
+            {
             latLongHashMap.put("latitude" + k, null);
             latLongHashMap.put("longitude" + k, null);
-            //}
+            }
             latLongHashMap.put("npi_id" + k, npiID);
             latLongHashMap.put("name" + k, providerName);
             latLongHashMap.put("address" + k, npiProvideraddress.replace("+", " "));
