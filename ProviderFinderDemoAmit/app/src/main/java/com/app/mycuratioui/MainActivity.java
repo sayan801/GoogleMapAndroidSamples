@@ -1,6 +1,4 @@
 package com.app.mycuratioui;
-
-import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.text.Html;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,13 +23,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-//import com.app.mychartui.CustomFragmentActivity;
-//import com.app.mycuratioui.ActionBarDynamic;
-//import com.app.mycuratioui.ApiUrls;
-//import com.app.mycuratioui.ConnectionDetector;
-//import com.app.mycuratioui.DatabaseHandler;
-//import com.app.mycuratioui.ServiceHandler;
-//import com.app.mycuratioui.SharedPreferenceClass;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -50,9 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import android.view.View.OnClickListener;
-import android.widget.Toast;
-
-import com.app.mycuratioui.R;
 
 public class MainActivity extends FragmentActivity implements OnClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
 {
@@ -121,22 +107,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, G
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_results);
         sharedPrefClassObj = new SharedPreferenceClass(getApplicationContext());
-/*
-        ActionBarDynamic actionbardynamic = new ActionBarDynamic();
-        String colorCode="#54D66A";
-        actionbardynamic.DynamicActionBar(getActionBar(), colorCode);
-        ActionBar ab = getActionBar();
-        ab.setCustomView(R.layout.custom_actionbar_layout);
-
-        TextView TvActionbarTitle=(TextView)findViewById(R.id.TvActionBarTitle);
-        TvActionbarTitle.setText("PROVIDERS");
-
-        myApiUrls = new ApiUrls();
-        latlonURL = myApiUrls.getLatLongFromAddress.toString();
-        distance = sharedPrefClassObj.getDistance().toString();
-        userInputtedZip = sharedPrefClassObj.getProviderSearchLocation().toString();
-        txonomyUrl = myApiUrls.getTaxonomyDetails.toString();
-*/
         searchDescription = (TextView)findViewById(R.id.searchDescription);
         searchDescription.setOnClickListener(this);
 
