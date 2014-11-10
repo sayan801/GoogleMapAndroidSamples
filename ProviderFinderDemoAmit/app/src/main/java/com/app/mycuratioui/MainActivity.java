@@ -16,7 +16,6 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -49,7 +48,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener, G
      */
     public static int dip2px(Context context, float dipValue)
     {
-        if (context == null) {
+        if (context == null)
+        {
             return (int) dipValue;
         }
         final float scale = context.getResources().getDisplayMetrics().density;
@@ -66,8 +66,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, G
     //// public Button TurnAgain;
     GoogleMap map;
     protected Context context;
-    public  ListView list;
-    ApiUrls myApiUrls;
     int listviewNoOfRow , markerPositionBlack = 0,markerPositionGreen =0, totalNoOfResult = 0, k=0, alfaValue = 0, listItemPotion = 0,  number = 1, loadMoreData = 0;
     // 'k' is just increase latLongHashMap position value 'n' times, j is increment value to 0-4 and after 4 its become again 0 and will continue
     Double providerLatitude = null, providerLongitude = null;
@@ -76,10 +74,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener, G
     private TransparentProgressDialog pd;
     private android.os.Handler h;
     private Runnable r;
-    String latlonURL,EmergencyURL, emergencyTaxcode, specialityTaxcode, specialityURL, npiProvideraddress, npiProviderPhNo, gender, entity_type, ProviderNamePrefixText, ProviderFirstName, ProviderLastName,
+    String latlonURL, npiProvideraddress, npiProviderPhNo, gender, entity_type, ProviderNamePrefixText, ProviderFirstName, ProviderLastName,
             ProviderOrganizationName, ProviderFirstLineBusinessMailingAddress, ProviderBusinessMailingAddressCityName, ProviderBusinessMailingAddressStateName, ProviderBusinessMailingAddressFaxNumber,
-            ProviderBusinessMailingAddressPostalCode, displayname, HealthcareProviderTaxonomyCode_1, txonomyUrl, distance, userInputtedZip, jsonStrServiceCall, providerAddress = null, providerName=null,
-            npiIDOfProvider, nameOfProvider, addressOfProvider, zoomProviderAddress, zoomProviderName, getLatLongFromAddressURL, npiID, provider2ndaddress, getJsonURL, ProviderSecondLineBusinessMailingAddress;
+            ProviderBusinessMailingAddressPostalCode, displayname, HealthcareProviderTaxonomyCode_1, jsonStrServiceCall, providerAddress = null, providerName=null,
+            getLatLongFromAddressURL, npiID, provider2ndaddress, getJsonURL, ProviderSecondLineBusinessMailingAddress;
 
     JSONObject jsObject, jsonObject;
     JSONArray jArray, latlngArry;
@@ -99,7 +97,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, G
     private MyAdapter adapter;
     private MyTask task;
     JSONObject jObject;
-    String providerSearchLocation,  providerNameString, fullTextSearchLocation; //provider text as search type of provider
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -109,132 +106,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener, G
         sharedPrefClassObj = new SharedPreferenceClass(getApplicationContext());
         searchDescription = (TextView)findViewById(R.id.searchDescription);
         searchDescription.setOnClickListener(this);
-
         searchDescriptionAll = (TextView)findViewById(R.id.searchDescriptionALL);
         searchDescriptionAll.setOnClickListener(this);
-
         tvNoOfResults = (TextView)findViewById(R.id.txtNoOfResults);
 
-        String providerSearchDistance = sharedPrefClassObj.getProviderSearchDistance();
-
-/*
-
-        if (sharedPrefClassObj.getProviderSearchType().toString().equals("name"))
-        {
-            if (sharedPrefClassObj.getProviderNameSearchTerm().toString().equals("-1"))
-            {
-                providerNameString = "all Providers";
-            }
-            else
-            {
-                providerNameString = sharedPrefClassObj.getProviderNameSearchTerm();
-            }
-        }
-        else if (sharedPrefClassObj.getProviderSearchType().toString().equals("hospital"))
-        {
-            providerNameString = "hospitals";
-        }
-        else if (sharedPrefClassObj.getProviderSearchType().toString().equals("pharmacy"))
-        {
-            providerNameString = "Pharmacy";
-        }
-        else if (sharedPrefClassObj.getProviderSearchType().toString().equals("emergency") || sharedPrefClassObj.getProviderSearchType().toString().equals("urgentcare"))
-        {
-            if (sharedPrefClassObj.getEmergencyorUrgentcare().toString().equals("emergency"))
-            {
-                providerNameString = "Emergency Rooms";
-            }
-            else if (sharedPrefClassObj.getEmergencyorUrgentcare().toString().equals("urgentcare"))
-            {
-                providerNameString = "Urgent Care";
-            }
-            else
-            {
-                //NoFilter
-                providerNameString = "Emergency and Urgent Care";
-            }
-        } else if (sharedPrefClassObj.getProviderSearchType().toString().equals("speciality"))
-        {
-            if (sharedPrefClassObj.getProviderNameSearchTerm().toString().equals("-1"))
-            {
-                providerNameString = "all Speciality";
-            }
-            else
-            {
-                providerNameString =  sharedPrefClassObj.getProviderNameSearchTerm();
-            }
-        }
-        else
-        {
-            //Some thing is went to Wrong...However then it
-            providerNameString = "Provider";
-        }
-
-        if(sharedPrefClassObj.getProviderLocationSearchType() != null)
-        {
-            if(sharedPrefClassObj.getProviderLocationSearchType().equals("cityName"))
-            {
-                providerSearchLocation = sharedPrefClassObj.getProviderChosenCityName();
-            }
-            else if(sharedPrefClassObj.getProviderSearchLocation() != null)
-            {
-                providerSearchLocation = sharedPrefClassObj.getProviderSearchLocation();
-            }
-            else
-            {
-                providerSearchLocation= " ";
-            }
-
-            fullTextSearchLocation = providerSearchLocation;
-
-            String[] DescriptionLocationText = providerSearchLocation.split(" ");
-            if(DescriptionLocationText.length > 0)
-            {
-                providerSearchLocation = DescriptionLocationText[0];
-            }
-            if(DescriptionLocationText.length > 1)
-            {
-                providerSearchLocation = DescriptionLocationText[0] + " " + DescriptionLocationText[1];
-            }
-            if(DescriptionLocationText.length > 2)
-            {
-                providerSearchLocation = DescriptionLocationText[0] + " " + DescriptionLocationText[1] + " " + DescriptionLocationText[2] + "...";
-            }
-            if(DescriptionLocationText.length > 3)
-            {
-                searchDescription.setEnabled(true);
-                searchDescriptionAll.setText(Html.fromHtml("Searching for <font color='#54D66A'>"+providerNameString+"</font> Within <font color='#54D66A'>"+
-                        providerSearchDistance+ "</font> of <font color='#54D66A'>"+fullTextSearchLocation+"</font>?"));
-            }
-
-        }
-
-        String fullTextProviderName = providerNameString;
-        String[] DescriptionName = providerNameString.split(" ");
-        if(DescriptionName.length > 0)
-        {
-            providerNameString = DescriptionName[0];
-        }
-        if(DescriptionName.length > 1)
-        {
-            providerNameString = DescriptionName[0] + " " + DescriptionName[1];
-        }
-        if(DescriptionName.length > 2)
-        {
-            providerNameString = DescriptionName[0] + " " + DescriptionName[1] + " " + DescriptionName[2] + "...";
-        }
-        if(DescriptionName.length > 3)
-        {
-            searchDescription.setEnabled(true);
-            searchDescriptionAll.setText(Html.fromHtml("Searching for <font color='#54D66A'>"+fullTextProviderName+"</font> Within <font color='#54D66A'>"+
-                    providerSearchDistance+ "</font> of <font color='#54D66A'>"+fullTextSearchLocation+"</font>?"));
-        }
-
-        searchDescription.setText(Html.fromHtml("Searching for <font color='#54D66A'>"+providerNameString+"</font> Within <font color='#54D66A'>"+
-                providerSearchDistance+ "</font> of <font color='#54D66A'>"+providerSearchLocation+"</font>?"));
-
-        //searchDescription.setText(Html.fromHtml(sharedPrefClassObj.getProviderFinderCompleteSearchString()+":"));
-        db = new DatabaseHandler(this); */
         getJsonURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderByPharmacyZipDistance/72401/5";
         latlonURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
         searchDescription = (TextView)findViewById(R.id.searchDescription);
@@ -269,68 +144,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, G
                 latLongHashMap.clear();
                 visibleMarkers.clear();
                 visibleMarkersGreen.clear();
-/*
-                if (sharedPrefClassObj.getProviderSearchType().toString().equals("name"))
-                {
-                    String providerName = sharedPrefClassObj.getProviderNameSearchTerm().toString();
-                    providerName = providerName.trim();
-
-                    if (providerName.contains(" "))
-                    {
-                        String[] pData = providerName.split(" ");
-                        String urlValue = myApiUrls.getProviderInfoByFullNameZipDistance.toString() + pData[0]+"/"+ pData[1]+ "/" + userInputtedZip + "/" + distance;
-                        getJsonURL = urlValue;
-                    }
-                    else
-                    {
-                        providerName = providerName.replace(" ", "+");
-                        String urlValue = myApiUrls.getProviderInfoByPartialNameZipDistance.toString() + providerName + "/" + userInputtedZip + "/" + distance;
-                        getJsonURL = urlValue;
-                    }
-                }
-                else if (sharedPrefClassObj.getProviderSearchType().toString().equals("hospital"))
-                {
-                    String hopitalURL = myApiUrls.getProviderHospitalByZipDistance.toString();
-                    String urlValue = hopitalURL + userInputtedZip + "/" + distance;
-                    getJsonURL = urlValue;
-                }
-                else if (sharedPrefClassObj.getProviderSearchType().toString().equals("pharmacy"))
-                {
-                    String pharmacyURL = myApiUrls.getProviderPharmacyByZipDistance.toString();
-                    String urlValue = pharmacyURL + userInputtedZip + "/" + distance;
-                    getJsonURL = urlValue;
-                }
-                else if (sharedPrefClassObj.getProviderSearchType().toString().equals("emergency") || sharedPrefClassObj.getProviderSearchType().toString().equals("urgentcare"))
-                {
-                    if (sharedPrefClassObj.getEmergencyorUrgentcare().toString().equals("emergency"))
-                    {
-                        emergencyTaxcode = "261QE0002X";
-                        EmergencyURL = myApiUrls.getProviderInfoByEmergencyUrgentCareZip.toString();
-                        String urlValue = EmergencyURL + "/" + emergencyTaxcode + "/" + userInputtedZip + "/" + distance;
-                        getJsonURL = urlValue;
-                    }
-                    else if (sharedPrefClassObj.getEmergencyorUrgentcare().toString().equals("urgentcare"))
-                    {
-                        EmergencyURL = myApiUrls.getProviderInfoByEmergencyUrgentCareZip.toString();
-                        emergencyTaxcode = "261QU0200X";
-                        String urlValue = EmergencyURL + "/" + emergencyTaxcode + "/" + userInputtedZip + "/" + distance;
-                        getJsonURL = urlValue;
-                    }
-                    else
-                    {
-                        //NoFilter
-                        EmergencyURL = myApiUrls.getProviderInfoByEmergencyUrgentCareZip.toString();
-                        emergencyTaxcode = "-1";
-                        String urlValue = EmergencyURL + "/" + emergencyTaxcode + "/" + userInputtedZip + "/" + distance;
-                        getJsonURL = urlValue;
-                    }
-                } else //(sharedPrefClassObj.getProviderSearchType().toString().equals("speciality"))
-                {
-                    specialityTaxcode = sharedPrefClassObj.getProviderType().toString();
-                    specialityURL = myApiUrls.getProviderInfoBySpecialityZipDistance.toString();
-                    String urlValue = specialityURL + "/" + specialityTaxcode + "/" + userInputtedZip + "/" + distance;
-                    getJsonURL = urlValue;
-                }*/
             }
             catch (Exception e)
             {
@@ -1107,18 +920,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, G
         Button BtnShowAllProviderCancel = (Button) custom_show_all_providers.findViewById(R.id.ButtonShowAllProviderCancel);
         BtnShowAllProviderCancel.setOnClickListener(this);
         custom_show_all_providers.show();
-    }
-    public void showProvider(View view)
-    {
-        getJsonURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderByPharmacyZipDistance/72401/5";
-        //getJsonURL= "http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByEmergencyUrgentCareZip/-1/16601/10";
-        task = new MyTask();
-        task.execute();
-
-        task = new MyTask();
-        task.execute();
-
-        //I can't understand why execute Asynctask Two times..although its working properly
     }
 }
 // Bamanga6i Lat: 22.74925 long: 88.5122154
