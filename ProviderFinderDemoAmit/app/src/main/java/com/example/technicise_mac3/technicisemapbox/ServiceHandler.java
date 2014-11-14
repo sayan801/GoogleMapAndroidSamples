@@ -1,4 +1,11 @@
-package com.app.mycuratioui;
+package com.example.technicise_mac3.technicisemapbox;
+
+/**
+ * Created by technicise on 10/5/14.
+ */
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -10,16 +17,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-
-
-
-/**
- * Created by technicise on 10/5/14.
- */
 
 public class ServiceHandler {
 

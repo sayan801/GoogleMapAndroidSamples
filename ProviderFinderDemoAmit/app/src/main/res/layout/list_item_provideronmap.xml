@@ -1,4 +1,4 @@
-<com.app.mycuratioui.CheckableLinearLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="fill_parent"
@@ -10,17 +10,20 @@
         android:id="@+id/Markar_Icon"
         android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:src="@drawable/show_hide_item"
+        android:layout_height="wrap_content"
+        android:minHeight="80dp"
+        android:maxHeight="120dp"
+        android:src="@drawable/markerlistviewblackandwhite"
         android:duplicateParentState="true"
         android:layout_gravity="center"
         android:layout_marginLeft="15dp"
+
         />
     <LinearLayout
         android:id="@+id/linearLayoutProviderDetails"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="5"
+        android:layout_height="wrap_content"
+
         android:orientation="vertical"
         android:layout_marginLeft="35dp"
         android:layout_marginRight="10dp"
@@ -54,7 +57,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="15"
+
             android:orientation="horizontal"
             >
             <RatingBar
@@ -62,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                style="@style/overallRatingBar"
+
                 android:numStars="5"
                 android:stepSize="3"
                 android:gravity="right"
@@ -115,4 +118,4 @@
             android:visibility="invisible"
             />
     </LinearLayout>
-</com.app.mycuratioui.CheckableLinearLayout>
+</LinearLayout>
