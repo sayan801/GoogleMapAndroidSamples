@@ -46,7 +46,7 @@
                         android:gravity="right"
                         android:layout_marginTop="9dp"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_launcher"
+                        android:src="@drawable/closeicon"
                         android:layout_weight=".1"
                         />
                 </LinearLayout>

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.nineoldandroids.animation.Animator;
@@ -88,6 +89,7 @@ public class SlidingDrawer extends FrameLayout {
 		boolean isPressing;
 		boolean isMoved;//主要用来判断tab事件的，如果移动过，将不产生tab事件。
 		long pressTimeMillis;
+        ImageView img1 = (ImageView) findViewById(R.id.slidingImg);
 		
 		public LayoutClickListener(int screenW, int screenH) {
 			containerWidth = screenW;
@@ -167,91 +169,110 @@ public class SlidingDrawer extends FrameLayout {
 			return false;
 		}
 
-		private void move2Top(int duration, boolean isUp){
-			if(isUp){
-				
-				drawer.layout(0, drawer.getTop(), drawer.getWidth(), drawer.getTop() + containerHeight);
-				content.layout(0, content.getTop(), drawer.getWidth(), containerHeight);
-				//routeSummary.setBottom(routeSummary.getTop() + containerHeight);
-				//scrollView.setBottom(containerHeight);
-				content.requestLayout();
-			}
-			if(duration < 100){
-				duration = 100;
-				Log.e("", "move2Top(int duration, boolean isUp) pass the wrong duration");
-			}
-			state = DrawerState.Top;
-			ObjectAnimator ani;
-			
-			if(duration == FAST_ANIMATION_DURATION || duration < 200){
-				ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, -drawer.getTop()).setDuration(duration);
-			} else {
-				ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, -drawer.getTop(), -drawer.getTop() + ANIMATION_BOUND_VALUE, -drawer.getTop()).setDuration(duration);
-			}
-			
-			ani.addListener(this);
-			ani.start();
-		}
-		
-		private void move2Center(int duration, boolean isUp){
-			if(isUp){
-				
-				drawer.layout(0, drawer.getTop(), drawer.getWidth(), drawer.getTop() + containerHeight);
-				content.layout(0, content.getTop(), content.getWidth(), containerHeight);
-				//routeSummary.setBottom(routeSummary.getTop() + containerHeight);
-				//scrollView.setBottom(containerHeight);
-				content.requestLayout();
-			}
-			if(duration < 100){
-				duration = 100;
-				Log.e("", "move2Top(int duration, boolean isUp) pass the wrong duration");
-			}
-			state = DrawerState.Center;
-			ObjectAnimator ani;
-			if(duration == FAST_ANIMATION_DURATION || duration < 200){
-				ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, containerHeight / 2 - drawer.getTop()).setDuration(duration);
-			} else {
-				int offset = containerHeight/2 - drawer.getTop();
-				if(offset > 0){
-					ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, offset + ANIMATION_BOUND_VALUE, offset - ANIMATION_BOUND_VALUE, offset).setDuration(duration);
-				} else {
-					ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, offset - ANIMATION_BOUND_VALUE, offset + ANIMATION_BOUND_VALUE, offset).setDuration(duration);
-				}
-			}
-			ani.addListener(this);
-			ani.start();
-		}
-		
-		private void move2Bottom(int duration){
-			if(duration < 100){
-				duration = 100;
-				Log.e("", "move2Top(int duration, boolean isUp) pass the wrong duration");
-			}
-			state = DrawerState.Bottom;
-			ObjectAnimator ani;
-			if(duration == FAST_ANIMATION_DURATION || duration < 200){
-				ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, containerHeight - drawer.getTop() - DRAG_BAR_VALUE).setDuration(duration);
-			} else {
-				int offTemp = containerHeight - drawer.getTop() - DRAG_BAR_VALUE;
-				ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, offTemp, offTemp - ANIMATION_BOUND_VALUE, offTemp).setDuration(duration);
-			}
-			ani.addListener(this);
-			ani.start();
-		}
-		
-		
-		/**
-		 * when user tap the drag bar, change the state.
-		 */
-		private void tapAnimation(){
-			if(state == DrawerState.Top){
-				move2Bottom(MAX_ANIMATION_DURATION);
-			} else if(state == DrawerState.Center){
-				move2Top(MAX_ANIMATION_DURATION, true);
-			} else {
-				move2Center(MAX_ANIMATION_DURATION, true);
-			}
-		}
+        private void move2Top(int duration, boolean isUp){
+            if(isUp){
+
+                drawer.layout(0, drawer.getTop(), drawer.getWidth(), drawer.getTop() + containerHeight);
+                content.layout(0, content.getTop(), drawer.getWidth(), containerHeight);
+                //routeSummary.setBottom(routeSummary.getTop() + containerHeight);
+                //scrollView.setBottom(containerHeight);
+                content.requestLayout();
+            }
+            if(duration < 100){
+                duration = 100;
+                Log.e("", "move2Top(int duration, boolean isUp) pass the wrong duration");
+            }
+            state = DrawerState.Top;
+            ObjectAnimator ani;
+
+            if(duration == FAST_ANIMATION_DURATION || duration < 200){
+                ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, -drawer.getTop() ).setDuration(duration);
+            } else {
+                ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, -drawer.getTop(), -drawer.getTop()+ANIMATION_BOUND_VALUE, -drawer.getTop() ).setDuration(duration);
+            }
+
+            ani.addListener(this);
+            ani.start();
+
+            img1.setImageResource(R.drawable.closeicon);
+
+        }
+
+        private void move2Center(int duration, boolean isUp){
+            if(isUp){
+
+                drawer.layout(0, drawer.getTop(), drawer.getWidth(), drawer.getTop() + containerHeight);
+                content.layout(0, content.getTop(), content.getWidth(), containerHeight);
+
+                content.requestLayout();
+            }
+            if(duration < 100){
+                duration = 100;
+                Log.e("", "move2Top(int duration, boolean isUp) pass the wrong duration");
+            }
+            state = DrawerState.Center;
+            ObjectAnimator ani;
+            if(duration == FAST_ANIMATION_DURATION || duration < 200){
+                ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, containerHeight/2 - drawer.getTop()  ).setDuration(duration);
+            } else {
+                int offset = containerHeight/2 - drawer.getTop();
+                if(offset > 0){
+                    ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, offset+ANIMATION_BOUND_VALUE, offset-ANIMATION_BOUND_VALUE, offset).setDuration(duration);
+                } else {
+                    ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, offset-ANIMATION_BOUND_VALUE, offset+ANIMATION_BOUND_VALUE, offset).setDuration(duration);
+                }
+            }
+            ani.addListener(this);
+            ani.start();
+            img1.setImageResource(R.drawable.closeicon);
+        }
+
+        private void move2Bottom(int duration){
+            if(duration < 100){
+                duration = 100;
+                Log.e("", "move2Top(int duration, boolean isUp) pass the wrong duration");
+            }
+            state = DrawerState.Bottom;
+            ObjectAnimator ani;
+            if(duration == FAST_ANIMATION_DURATION || duration < 200){
+                ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, containerHeight - drawer.getTop() - DRAG_BAR_VALUE ).setDuration(duration);
+            } else {
+                int offTemp = containerHeight - drawer.getTop() - DRAG_BAR_VALUE;
+                ani = ObjectAnimator.ofFloat(drawer, "translationY", 0, offTemp, offTemp - ANIMATION_BOUND_VALUE, offTemp ).setDuration(duration);
+            }
+            ani.addListener(this);
+            ani.start();
+            //img1.setImageResource(R.drawable.menu);
+            img1.setImageResource(R.drawable.custom_menu_icon);
+        }
+
+
+        /**
+         * when user tap the drag bar, change the state.
+         */
+        private void tapAnimation(){
+            if(state == DrawerState.Top){
+//                move2Bottom(MAX_ANIMATION_DURATION);
+                move2Center(MAX_ANIMATION_DURATION,true);
+                img1.setImageResource(R.drawable.closeicon);
+
+            } else if(state == DrawerState.Center){
+                // move2Top(MAX_ANIMATION_DURATION, true);
+                move2Bottom(MAX_ANIMATION_DURATION);
+                //img1.setImageResource(R.drawable.menu);
+                img1.setImageResource(R.drawable.custom_menu_icon);
+
+            }
+            else if(state == DrawerState.Bottom) {
+                move2Top(MAX_ANIMATION_DURATION, true);
+                //move2Bottom(MAX_ANIMATION_DURATION);}
+                img1.setImageResource(R.drawable.closeicon);
+            }
+            else {
+                move2Center(MAX_ANIMATION_DURATION, true);
+                //tv1.setText("SLIDE dont know");
+            }
+        }
 		
 		/**
 		 * do the animation by the down and up Y position
