@@ -41,6 +41,16 @@ import java.util.Map;
 
 public class MyActivity extends Activity implements View.OnClickListener
 {
+
+    ///mapbox variables
+    MapView mv;
+    MapController mc;
+    MapController mcZoom;
+    private String currentMap = null;
+    private UserLocationOverlay myLocationOverlay;
+    public Marker myposmarker;
+
+
     /**
      * @param context
      * @param dipValue
@@ -70,7 +80,7 @@ public class MyActivity extends Activity implements View.OnClickListener
     int listviewNoOfRow , markerPositionBlack = 0,markerPositionGreen =0, totalNoOfResult = 0, k=0, alfaValue = 0, listItemPotion = 0,  number = 1, loadMoreData = 0;
     // 'k' is just increase latLongHashMap position value 'n' times, j is increment value to 0-4 and after 4 its become again 0 and will continue
     Double providerLatitude = null, providerLongitude = null;
-
+ApiUrls myApiUrls;
 
 
     private android.os.Handler h;
@@ -106,7 +116,32 @@ public class MyActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
 
-        getJsonURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/-1/66213/10";
+        //mapbox related objects
+        mv = (MapView) findViewById(R.id.mapview);
+        mc = new MapController(mv);
+        mcZoom= new MapController(mv);
+        mv.setMinZoomLevel(mv.getTileProvider().getMinimumZoomLevel());
+        mv.setMaxZoomLevel(mv.getTileProvider().getMaximumZoomLevel());
+        mv.setCenter(mv.getTileProvider().getCenterCoordinate());
+        mv.setZoom(1);
+
+        Drawable myIcon = getResources().getDrawable( R.drawable.ic_launcher );
+        Marker m = new Marker(mv, "hi", "hello", new LatLng(77.0875, 14.42112));
+        m.setMarker(myIcon);
+        m.setTitle("Hello Android");
+        m.setDescription("This is Technicise");
+
+        mv.addMarker(m);
+        myApiUrls= new ApiUrls();
+        latlonURL = myApiUrls.getLatLongFromAddress.toString();
+        // currentMap = "amit007.jnedbdll";
+        //brunosan.map-cyglrrfu
+
+        // Adds an icon that shows location
+        myLocationOverlay = new UserLocationOverlay(new GpsLocationProvider(this), mv);
+        myLocationOverlay.setDrawAccuracyEnabled(true);
+
+        getJsonURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/davis/66213/5";
 
         mListView = (ListView) findViewById(R.id.drawer_content);
         adapter = new MyAdapter(this, R.layout.list_item_provideronmap);
@@ -187,6 +222,7 @@ public class MyActivity extends Activity implements View.OnClickListener
         protected void onPostExecute(Void result)
         {
             mListView.setAdapter(adapter);
+            markProviderLocationOnMapUsingMapBox();
         }
     }
     /* start #### */
@@ -226,6 +262,7 @@ public class MyActivity extends Activity implements View.OnClickListener
     // Parsing the Country JSON object
     private HashMap<String, Object> getCountry(JSONObject c)
     {
+        Log.d("getCountry",c+"");
         HashMap<String, Object> provider = new HashMap<String, Object>();
         try
         {
@@ -359,6 +396,9 @@ public class MyActivity extends Activity implements View.OnClickListener
             //take first 5 digit of provider Zip code
             ProviderBusinessMailingAddressPostalCode = ProviderBusinessMailingAddressPostalCode.substring(0, Math.min(ProviderBusinessMailingAddressPostalCode.length(), 5));
 
+            //sharedPrefClassObj.setProviderBusinessAddress(ProviderFirstLineBusinessMailingAddress);
+            //sharedPrefClassObj.setProviderPracticeAddress(provider2ndaddress);
+
             npiProvideraddress =
                     ProviderFirstLineBusinessMailingAddress + ", " +
                             ProviderSecondLineBusinessMailingAddress  + ", " +
@@ -390,15 +430,16 @@ public class MyActivity extends Activity implements View.OnClickListener
 
             if(npiProvideraddress.isEmpty() || npiProvideraddress.equals(null) || npiProvideraddress == null)
                 npiProvideraddress="addressnotfound";
-/*
+               // Log.d("working till here","yes");
             getLatLongFromAddressURL = latlonURL + npiProvideraddress;
+          //  Log.d("working till here",getLatLongFromAddressURL+"");
             jsonStrServiceCall = shProvideraddress.makeServiceCall(getLatLongFromAddressURL, ServiceHandler.GET);
 
             jsObject = new JSONObject(jsonStrServiceCall);
             latlngArry = jsObject.getJSONArray("result");
 
             jsonObject = latlngArry.getJSONObject(0);
-
+           // Log.d("working till here","2");
             if(jsonObject.getString("status").equals("OK"))
             {
                 providerLatitude = jsonObject.getDouble("latitude");
@@ -411,14 +452,17 @@ public class MyActivity extends Activity implements View.OnClickListener
             {
                 latLongHashMap.put("latitude" + k, null);
                 latLongHashMap.put("longitude" + k, null);
-            }*/
-            Log.d("npiID",npiID+"");
+            }
+          //  Log.d("working till here","3");
+           // Log.d("npiID",npiID+"");
             latLongHashMap.put("npi_id" + k, npiID);
             latLongHashMap.put("name" + k, providerName);
             latLongHashMap.put("address" + k, npiProvideraddress.replace("+", " "));
             k++;
-
-
+            //Log.d("working till here","4");
+//            if(!HealthcareProviderTaxonomyCode_1.isEmpty())
+//                displayname = db.getTaxonomy(HealthcareProviderTaxonomyCode_1);
+//            else
                 displayname ="Speciality not found";
 
             HashMap<String, String> providerData = new HashMap<String, String>();
@@ -429,7 +473,7 @@ public class MyActivity extends Activity implements View.OnClickListener
             providerData.put("npiid"+(number-1), npiID );
             mArrayList.add(providerData);
             number += 1;
-
+           // Log.d("working till here","5");
         }
         catch (JSONException e)
         {
@@ -438,4 +482,35 @@ public class MyActivity extends Activity implements View.OnClickListener
         return provider;
     }
 /* End ### */
+
+    public void markProviderLocationOnMapUsingMapBox()
+    {
+        Log.d("markProviderLocationOnMapUsingMapBox","markProviderLocationOnMapUsingMapBox");
+        //BitmapDescriptor IconMarkerplot = BitmapDescriptorFactory.fromResource(R.drawable.markerblack);
+        //BitmapDescriptor IconMarkerplotgreen = BitmapDescriptorFactory.fromResource(R.drawable.markerplotgreen);
+        Drawable IconMarkerplot = getResources().getDrawable( R.drawable.markerblack );
+        Drawable IconMarkerplotgreen = getResources().getDrawable( R.drawable.markerplotgreen );
+        for (int loop = 0; loop < latLongHashMap.size() / 5; loop++)
+        {
+            Log.d("loop",loop+1+"");
+            providerLatitude = Double.valueOf(latLongHashMap.get("latitude" + loop));
+            providerLongitude = Double.valueOf(latLongHashMap.get("longitude" + loop));
+            providerName = latLongHashMap.get("name" + loop);
+            providerAddress = latLongHashMap.get("address" + loop);
+
+
+//            Marker markerGreen = map.addMarker(new MarkerOptions()
+//                    .position(new LatLng(providerLatitude, providerLongitude))
+//                    .title(providerName)
+//                    .snippet(" " + providerAddress)
+//                    .icon(IconMarkerplotgreen));
+
+            Marker m = new Marker(mv, "hi", "hello", new LatLng(providerLatitude,providerLongitude));
+            m.setMarker(IconMarkerplot);
+            m.setTitle(providerName);
+            m.setDescription(providerAddress);
+            mv.addMarker(m);
+        }
+    }
+
 }
