@@ -123,15 +123,8 @@ ApiUrls myApiUrls;
         mv.setMinZoomLevel(mv.getTileProvider().getMinimumZoomLevel());
         mv.setMaxZoomLevel(mv.getTileProvider().getMaximumZoomLevel());
         mv.setCenter(mv.getTileProvider().getCenterCoordinate());
-        mv.setZoom(1);
 
-        Drawable myIcon = getResources().getDrawable( R.drawable.ic_launcher );
-        Marker m = new Marker(mv, "hi", "hello", new LatLng(77.0875, 14.42112));
-        m.setMarker(myIcon);
-        m.setTitle("Hello Android");
-        m.setDescription("This is Technicise");
 
-        mv.addMarker(m);
         myApiUrls= new ApiUrls();
         latlonURL = myApiUrls.getLatLongFromAddress.toString();
         // currentMap = "amit007.jnedbdll";
@@ -511,6 +504,8 @@ ApiUrls myApiUrls;
             m.setDescription(providerAddress);
             mv.addMarker(m);
         }
+        mv.setZoom(10);
+        mc.animateTo(new LatLng(providerLatitude, providerLongitude),true);
     }
 
 }

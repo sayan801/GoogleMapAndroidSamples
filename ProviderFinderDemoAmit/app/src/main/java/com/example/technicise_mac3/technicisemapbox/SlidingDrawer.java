@@ -156,7 +156,7 @@ public class SlidingDrawer extends FrameLayout {
 			case MotionEvent.ACTION_OUTSIDE:
 				
 				//dragView.setImageBitmap(imgNormal);
-				if(System.currentTimeMillis() - pressTimeMillis < 200 && !isMoved){
+				if(System.currentTimeMillis() - pressTimeMillis < 20 && !isMoved){
 					tapAnimation();
 					return true;
 				}
