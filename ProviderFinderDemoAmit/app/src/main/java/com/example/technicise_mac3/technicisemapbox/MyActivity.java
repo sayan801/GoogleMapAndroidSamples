@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -49,6 +50,10 @@ public class MyActivity extends Activity implements View.OnClickListener
     private String currentMap = null;
     private UserLocationOverlay myLocationOverlay;
     public Marker myposmarker;
+
+    public HashMap<Integer, Marker> greenmarkers = new HashMap<Integer, Marker>();
+    public HashMap<Integer, Marker> blackmarkers  = new HashMap<Integer, Marker>();
+
 
 
     /**
@@ -139,6 +144,32 @@ ApiUrls myApiUrls;
         mListView = (ListView) findViewById(R.id.drawer_content);
         adapter = new MyAdapter(this, R.layout.list_item_provideronmap);
         new MyTask().execute(getJsonURL);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> argo, View view, int i, long l)
+            {
+
+                Marker tempMarkerBlack =  blackmarkers.get(i);
+                mv.removeMarker(tempMarkerBlack);
+
+
+
+                Marker tempMarkerGreen =  greenmarkers.get(i);
+                mv.addMarker(tempMarkerGreen);
+                LatLng locationGreen = tempMarkerGreen.getPoint();
+                mv.setZoom(15);
+                mc.animateTo(new LatLng(locationGreen.getLatitude(), locationGreen.getLongitude()),true);
+
+//                String providerClassification=((TextView)view.findViewById(R.id.provider)).getText().toString();
+//                String taxonomyCode=((TextView)view.findViewById(R.id.tvTaxonomyCode)).getText().toString();
+//                sharedPrefClassObj.setProviderNameSearchTerm(providerClassification);
+//                sharedPrefClassObj.setProviderType(taxonomyCode);
+//                goToLocationActivity();
+
+            }
+        });
     }
 
     @Override
@@ -481,8 +512,8 @@ ApiUrls myApiUrls;
         Log.d("markProviderLocationOnMapUsingMapBox","markProviderLocationOnMapUsingMapBox");
         //BitmapDescriptor IconMarkerplot = BitmapDescriptorFactory.fromResource(R.drawable.markerblack);
         //BitmapDescriptor IconMarkerplotgreen = BitmapDescriptorFactory.fromResource(R.drawable.markerplotgreen);
-        Drawable IconMarkerplot = getResources().getDrawable( R.drawable.markerblack );
-        Drawable IconMarkerplotgreen = getResources().getDrawable( R.drawable.markerplotgreen );
+        Drawable blackMarkerIcon = getResources().getDrawable( R.drawable.markerblack );
+        Drawable greenMarkerIcon = getResources().getDrawable( R.drawable.markerplotgreen );
         for (int loop = 0; loop < latLongHashMap.size() / 5; loop++)
         {
             Log.d("loop",loop+1+"");
@@ -498,14 +529,23 @@ ApiUrls myApiUrls;
 //                    .snippet(" " + providerAddress)
 //                    .icon(IconMarkerplotgreen));
 
-            Marker m = new Marker(mv, "hi", "hello", new LatLng(providerLatitude,providerLongitude));
-            m.setMarker(IconMarkerplot);
-            m.setTitle(providerName);
-            m.setDescription(providerAddress);
-            mv.addMarker(m);
+            Marker mBlack = new Marker(mv, "hi", "hello", new LatLng(providerLatitude,providerLongitude));
+            mBlack.setMarker(blackMarkerIcon);
+            mBlack.setTitle(providerName);
+            mBlack.setDescription(providerAddress);
+            mv.addMarker(mBlack);
+
+            Marker mGreen = new Marker(mv, "hi", "hello", new LatLng(providerLatitude,providerLongitude));
+            mGreen.setMarker(greenMarkerIcon);
+            mGreen.setTitle(providerName);
+            mGreen.setDescription(providerAddress);
+
+            greenmarkers.put(loop, mGreen);
+            blackmarkers.put(loop,mBlack);
         }
         mv.setZoom(10);
         mc.animateTo(new LatLng(providerLatitude, providerLongitude),true);
+
     }
 
 }
