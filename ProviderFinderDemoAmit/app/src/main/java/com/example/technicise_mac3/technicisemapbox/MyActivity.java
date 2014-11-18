@@ -8,14 +8,21 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,7 +61,7 @@ public class MyActivity extends Activity implements View.OnClickListener
     public HashMap<Integer, Marker> greenmarkers = new HashMap<Integer, Marker>();
     public HashMap<Integer, Marker> blackmarkers  = new HashMap<Integer, Marker>();
 
-
+    public TransparentProgressDialog pd;
 
     /**
      * @param context
@@ -121,6 +128,8 @@ ApiUrls myApiUrls;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
 
+        pd = new TransparentProgressDialog(this, R.drawable.spinner);
+pd.show();
         //mapbox related objects
         mv = (MapView) findViewById(R.id.mapview);
         mc = new MapController(mv);
@@ -145,22 +154,19 @@ ApiUrls myApiUrls;
         adapter = new MyAdapter(this, R.layout.list_item_provideronmap);
         new MyTask().execute(getJsonURL);
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> argo, View view, int i, long l)
-            {
+            public void onItemClick(AdapterView<?> argo, View view, int i, long l) {
 
-                Marker tempMarkerBlack =  blackmarkers.get(i);
+                Marker tempMarkerBlack = blackmarkers.get(i);
                 mv.removeMarker(tempMarkerBlack);
 
 
-
-                Marker tempMarkerGreen =  greenmarkers.get(i);
+                Marker tempMarkerGreen = greenmarkers.get(i);
                 mv.addMarker(tempMarkerGreen);
                 LatLng locationGreen = tempMarkerGreen.getPoint();
                 mv.setZoom(15);
-                mc.animateTo(new LatLng(locationGreen.getLatitude(), locationGreen.getLongitude()),true);
+                mc.animateTo(new LatLng(locationGreen.getLatitude(), locationGreen.getLongitude()), true);
 
 //                String providerClassification=((TextView)view.findViewById(R.id.provider)).getText().toString();
 //                String taxonomyCode=((TextView)view.findViewById(R.id.tvTaxonomyCode)).getText().toString();
@@ -247,6 +253,7 @@ ApiUrls myApiUrls;
         {
             mListView.setAdapter(adapter);
             markProviderLocationOnMapUsingMapBox();
+            pd.dismiss();
         }
     }
     /* start #### */
@@ -546,6 +553,40 @@ ApiUrls myApiUrls;
         mv.setZoom(10);
         mc.animateTo(new LatLng(providerLatitude, providerLongitude),true);
 
+    }
+
+    public class TransparentProgressDialog extends Dialog
+    {
+        private ImageView iv;
+        public TransparentProgressDialog(Context context, int resourceIdOfImage)
+        {
+            super(context, R.style.TransparentProgressDialog);
+            WindowManager.LayoutParams wlmp = getWindow().getAttributes();
+            wlmp.gravity = Gravity.CENTER_HORIZONTAL;
+            getWindow().setAttributes(wlmp);
+            setTitle(null);
+            setCancelable(false);
+            setOnCancelListener(null);
+            LinearLayout layout = new LinearLayout(context);
+            layout.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            iv = new ImageView(context);
+            iv.setImageResource(resourceIdOfImage);
+            layout.addView(iv, params);
+            addContentView(layout, params);
+        }
+
+        @Override
+        public void show()
+        {
+            super.show();
+            RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, .5f);
+            anim.setInterpolator(new LinearInterpolator());
+            anim.setRepeatCount(Animation.INFINITE);
+            anim.setDuration(1000);
+            iv.setAnimation(anim);
+            iv.startAnimation(anim);
+        }
     }
 
 }
