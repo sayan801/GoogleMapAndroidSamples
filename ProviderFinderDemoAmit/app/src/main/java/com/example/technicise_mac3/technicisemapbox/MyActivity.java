@@ -142,32 +142,33 @@ pd.show();
         mv.setMapViewListener(new MapViewListener() {
             @Override
             public void onShowMarker(MapView mapView, Marker marker) {
-                Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG);
+               // Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onHidemarker(MapView mapView, Marker marker) {
-                Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG);
+                //Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onTapMarker(MapView mapView, Marker marker) {
-                Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(),marker.getTitle(),Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onLongPressMarker(MapView mapView, Marker marker) {
-                Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG);
+               // Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onTapMap(MapView mapView, ILatLng iLatLng) {
-                Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG);
+               // Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onLongPressMap(MapView mapView, ILatLng iLatLng) {
-                Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG);
+               // Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG).show();
             }
         });
 
