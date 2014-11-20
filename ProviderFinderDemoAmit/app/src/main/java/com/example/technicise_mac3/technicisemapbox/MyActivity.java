@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.api.ILatLng;
+import com.mapbox.mapboxsdk.events.MapListener;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.overlay.GpsLocationProvider;
 import com.mapbox.mapboxsdk.overlay.Icon;
@@ -36,6 +37,7 @@ import com.mapbox.mapboxsdk.overlay.PathOverlay;
 import com.mapbox.mapboxsdk.overlay.UserLocationOverlay;
 import com.mapbox.mapboxsdk.views.MapController;
 import com.mapbox.mapboxsdk.views.MapView;
+import com.mapbox.mapboxsdk.views.MapViewListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -137,7 +139,37 @@ pd.show();
         mv.setMinZoomLevel(mv.getTileProvider().getMinimumZoomLevel());
         mv.setMaxZoomLevel(mv.getTileProvider().getMaximumZoomLevel());
         mv.setCenter(mv.getTileProvider().getCenterCoordinate());
+        mv.setMapViewListener(new MapViewListener() {
+            @Override
+            public void onShowMarker(MapView mapView, Marker marker) {
+                Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG);
+            }
 
+            @Override
+            public void onHidemarker(MapView mapView, Marker marker) {
+                Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG);
+            }
+
+            @Override
+            public void onTapMarker(MapView mapView, Marker marker) {
+                Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG);
+            }
+
+            @Override
+            public void onLongPressMarker(MapView mapView, Marker marker) {
+                Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG);
+            }
+
+            @Override
+            public void onTapMap(MapView mapView, ILatLng iLatLng) {
+                Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG);
+            }
+
+            @Override
+            public void onLongPressMap(MapView mapView, ILatLng iLatLng) {
+                Toast.makeText(getApplicationContext(),"lol",Toast.LENGTH_LONG);
+            }
+        });
 
         myApiUrls= new ApiUrls();
         latlonURL = myApiUrls.getLatLongFromAddress.toString();
@@ -168,6 +200,7 @@ pd.show();
                 mv.setZoom(15);
                 mc.animateTo(new LatLng(locationGreen.getLatitude(), locationGreen.getLongitude()), true);
 
+
 //                String providerClassification=((TextView)view.findViewById(R.id.provider)).getText().toString();
 //                String taxonomyCode=((TextView)view.findViewById(R.id.tvTaxonomyCode)).getText().toString();
 //                sharedPrefClassObj.setProviderNameSearchTerm(providerClassification);
@@ -179,8 +212,7 @@ pd.show();
     }
 
     @Override
-    public void onClick(View view)
-    {
+    public void onClick(View v) {
 
     }
 
@@ -588,5 +620,6 @@ pd.show();
             iv.startAnimation(anim);
         }
     }
+
 
 }
