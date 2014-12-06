@@ -24,6 +24,8 @@ public class SecondActivity extends Activity {
     ListView lv;
     String[] First_Name;
     String[] Last_Name;
+    String[] Country_Name;
+    String[] Business_Address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,19 +59,24 @@ public class SecondActivity extends Activity {
 
             First_Name=new String[jarray.length()];
             Last_Name=new String[jarray.length()];
+            Country_Name=new String[jarray.length()];
+            Business_Address=new String[jarray.length()];
+
             JSONObject jobject=null;
             for(int i=0;i<=jarray.length();i++){
                 jobject=jarray.getJSONObject(i);
 
                 First_Name[i]=jobject.getString("Provider First Name");
                 Last_Name[i]=jobject.getString("Provider Last Name");
+                Country_Name[i]=jobject.getString("Provider Business Mailing Address Country Code");
+                Business_Address[i]=jobject.getString("Provider First Line Business Practice Location Address");
             }
 
 
         } catch (Exception e) {
             Log.e("JSON Parser", "Error parsing data " + e.toString());
         }
-        lv.setAdapter(new MyAdapter(this,First_Name,Last_Name));
+        lv.setAdapter(new MyAdapter(this,First_Name,Last_Name,Country_Name,Business_Address));
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -89,7 +96,7 @@ public class SecondActivity extends Activity {
                 finish();
                 return true;
 
-            default:
+                default:
 
                 return super.onOptionsItemSelected(item);
         }
