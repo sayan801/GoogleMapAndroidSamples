@@ -40,9 +40,14 @@ public class MainActivity extends Activity {
     public ProgressBar MyProgressBar;
 
     JSONArray news = null;
+
     //URL to get JSON Array
     static String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/davis/66213/1";
-    public String  strJson;
+
+    static String address="http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
+
+
+    public String  strJson,StrJsonTest,CallAddress;
     int k=0,  number = 1,  reviews=0;
 
     String npiProvideraddress, npiProviderPhNo, gender, entity_type, ProviderNamePrefixText, ProviderFirstName, ProviderLastName,
@@ -52,7 +57,7 @@ public class MainActivity extends Activity {
 
     public TextView mTextViewSpeciality, mTextViewName, mTextViewAddress, mTextViewNpiId;
 
-    JSONArray jArray;
+    JSONArray jArray,jArrayTest;
 
     List<HashMap<String, Object>> npidata = null;
 
@@ -97,6 +102,7 @@ public class MainActivity extends Activity {
                 new MyTask().execute();
                 Log.d("URL",url);
                 MyProgressBar.setVisibility(View.VISIBLE);
+
             }
         });
         adapter = new MyAdapter(this, R.layout.list_item_provideronmap);
@@ -174,11 +180,12 @@ public class MainActivity extends Activity {
         protected void onPostExecute(Void result)
         {
             adapter.notifyDataSetChanged();
-            MyProgressBar.setVisibility(View.GONE);
+           // MyProgressBar.setVisibility(View.GONE);
 
-            Intent a = new Intent(getApplicationContext(),SecondActivity.class);
-            sharedPrefClassObj.SetListData(strJson);
-            startActivity(a);
+//            Intent a = new Intent(getApplicationContext(),SecondActivity.class);
+//            sharedPrefClassObj.SetListData(strJson);
+//            startActivity(a);
+
 
         }
     }
@@ -295,6 +302,8 @@ public class MainActivity extends Activity {
             if (c.has("Provider First Line Business Practice Location Address"))
             {
                 ProviderFirstLineBusinessMailingAddress = c.getString("Provider First Line Business Practice Location Address");
+
+                Log.d("Testing",ProviderFirstLineBusinessMailingAddress);
             }
             else
             {
@@ -363,6 +372,10 @@ public class MainActivity extends Activity {
             npiProvideraddress = ProviderFirstLineBusinessMailingAddress + ", " + ProviderSecondLineBusinessMailingAddress + ", " +
                     ProviderBusinessMailingAddressCityName + ", " + ProviderBusinessMailingAddressStateName  +", "+ ProviderBusinessMailingAddressPostalCode;
 
+
+
+
+
             if(c.has("Provider Gender Code"))
             {
                 gender = c.getString("Provider Gender Code");
@@ -384,12 +397,20 @@ public class MainActivity extends Activity {
             npiProvideraddress = npiProvideraddress.replace("?", "");   //'Disallowed Key Characters.'
             npiProvideraddress = npiProvideraddress.replace("#", "");
 
+
             if(npiProvideraddress.isEmpty() || npiProvideraddress.equals(null) || npiProvideraddress == null)
                 npiProvideraddress="addressnotfound"; // will return 'unknown' lat-long and prevented app crash
 
+////////////////// do api call for getting lat, long..
 
+            new Testing().execute();
+            CallAddress=address+npiProvideraddress;
+
+                 Log.d("CallAddress",CallAddress);
                 latLongHashMap.put("latitude" + k, null);
                 latLongHashMap.put("longitude" + k, null);
+
+
 
 
             latLongHashMap.put("npi_id" + k, npiID);
@@ -411,74 +432,96 @@ public class MainActivity extends Activity {
             mArrayList.add(providerData);
             number += 1;
 
+
+
         }
         catch (Exception e)  {  }
         return provider;
     }
-/* End ### */
-//
-//    private class JSONParse extends AsyncTask<String, Integer, ArrayList<HashMap<String, String>>> {
-//
-//        ArrayList<HashMap<String, String>> newsList = new ArrayList<HashMap<String, String>>();
-//
-//
-//        private ProgressDialog pDialog;
-//
-//        protected void onPreExecute() {
-//
-//            super.onPreExecute();
-//
-//            MyProgressBar.setVisibility(View.VISIBLE);
-//        }
-//
-//        @Override
-//        protected ArrayList<HashMap<String, String>> doInBackground(String... params) {
-//
-//            Parser jParser = new Parser();
-//            JSONObject json = jParser.getJSONData(url);
-//             Test=json.toString();
-//            Log.d("Amiyoooo",Test);
-//
-//            sharedPrefClassObj.SetListData(Test);
-//
-//
-//            try{
-//                news = json.getJSONArray(NEWS);
-//                for(int i=0;i<news.length();i++){
-//                    JSONObject object = news.getJSONObject(i);
-//                   // JSONObject newsline = object.getJSONObject(NEWS_LINE);
-//                    String headLine = object.getString(HEAD_LINE);
-//                    String dateLine = object.getString(DATE_LINE);
-//                    HashMap<String, String> map = new HashMap<String, String>();
-//                    map.put(HEAD_LINE, headLine);
-//                    map.put(DATE_LINE, dateLine);
-//                    newsList.add(map);
-//                }
-//            }catch(JSONException e){
-//                e.printStackTrace();
-//            }
-//            return newsList;
-//        }
-//        @Override
-//        protected void onPostExecute(ArrayList<HashMap<String, String>> result) {
-//
-//
-//            super.onPostExecute(result);
-//           // pDialog.dismiss();
-//            MyProgressBar.setVisibility(View.GONE);
-//            Btngetdata.setEnabled(false);
-//
-//            String []from = {HEAD_LINE,DATE_LINE};
-//
-//            int []to = {R.id.tv_headLn,R.id.tv_dateLn};
-//            ListAdapter adapter = new SimpleAdapter(MainActivity.this, result, R.layout.listview_item, from, to);
-//            setListAdapter(adapter);
-//
-//        }
-//
-//    }
-//
-//
+
+    class Testing extends AsyncTask<Void, Void, Void>
+    {
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+
+        }
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            // Creating service handler class instance
+            ServiceHandler sh = new ServiceHandler();
+
+            // Making a request to url and getting response
+            StrJsonTest = sh.makeServiceCall(CallAddress, ServiceHandler.GET);
+
+            try
+            {
+                JSONObject jObject2 = new JSONObject(StrJsonTest);
+
+                npidata = parse2(jObject2);
+               // sharedPrefClassObj.SetListData(strJson);
+                Log.d("JsonData",StrJsonTest);
+            }
+            catch (Exception ex)  {   }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result)
+        {
+             adapter.notifyDataSetChanged();
+             MyProgressBar.setVisibility(View.GONE);
+
+
+            Intent a = new Intent(getApplicationContext(),SecondActivity.class);
+            sharedPrefClassObj.SetListData(strJson);
+            startActivity(a);
+
+
+        }
+    }
+
+    /* start #### */
+    // Receives a JSONObject and returns a list
+    public List<HashMap<String,Object>> parse2(JSONObject jObject2)
+    {
+        try
+        {
+            // Retrieves all the elements in the 'countries' array
+            jArrayTest = jObject2.getJSONArray("npidata");
+        }
+        catch (JSONException e)
+        {
+            //e.printStackTrace();
+        }
+        return getCountries2(jArrayTest);
+    }
+
+    private List<HashMap<String, Object>> getCountries2(JSONArray jCountries2)
+    {
+        List<HashMap<String, Object>> countryList = new ArrayList<HashMap<String,Object>>();
+        HashMap<String, Object> provider = null;
+
+        try
+        {
+            //default first time load max. 10 result
+            for(int i=0; i < jCountries2.length(); i++)
+            {
+                // Call getCountry with country JSON object to parse the country
+                provider = getCountry((JSONObject)jCountries2.get(i));
+                countryList.add(provider);
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        return countryList;
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
