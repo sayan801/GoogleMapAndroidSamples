@@ -2,37 +2,28 @@ package com.amiyo.technicise.androidcustomprogress;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.ComponentName;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class SecondActivity extends Activity {
 
     SharedPreferenceClass sharedPrefClassObj;
-    TextView Tv,Tv1;
-
     String strJson;
     public ImageView view;
+    ListView lv;
+    String[] First_Name;
+    String[] Last_Name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,63 +32,51 @@ public class SecondActivity extends Activity {
         sharedPrefClassObj = new SharedPreferenceClass(getApplicationContext());
 
         ActionBarDynamic actionbardynamic = new ActionBarDynamic();
-        String colorCode="#54D66A";
+        String colorCode = "#54D66A";
         actionbardynamic.DynamicActionBar(getActionBar(), colorCode);
         ActionBar ab = getActionBar();
         ab.setCustomView(R.layout.custom_actionbar_layout);
 
-        view = (ImageView)findViewById(android.R.id.home);
+        view = (ImageView) findViewById(android.R.id.home);
         view.setPadding(20, 0, 0, 0);
 
-        TextView TvActionbarTitle=(TextView)findViewById(R.id.TvActionBarTitle);
+        TextView TvActionbarTitle = (TextView) findViewById(R.id.TvActionBarTitle);
         TvActionbarTitle.setText("PROVIDER DETAILS");
         TvActionbarTitle.setTextColor(Color.parseColor("#FFFFFF"));
 
-        Tv = (TextView) findViewById(R.id.ListViewTextName);
-        Tv1 = (TextView) findViewById(R.id.ListViewEmail);
+
 
         strJson = sharedPrefClassObj.GetListData();
 
-        initList();
-        ListView listView = (ListView) findViewById(R.id.listView1);
-        SimpleAdapter simpleAdapter = new SimpleAdapter(this, employeeList, android.R.layout.simple_list_item_1, new String[]{"employees"}, new int[]{android.R.id.text1});
-        listView.setAdapter(simpleAdapter);
-    }
+        lv=(ListView) findViewById(R.id.listView1);
 
-    List<Map<String,String>> employeeList = new ArrayList<Map<String,String>>();
-    private void initList(){
+        try {
+            JSONObject jobj=new JSONObject(strJson);
 
-        try{
-            JSONObject jsonResponse = new JSONObject(strJson);
-            JSONArray jsonMainNode = jsonResponse.optJSONArray("npidata");
+            JSONArray jarray=jobj.getJSONArray("npidata");
 
-            for(int i = 0; i<jsonMainNode.length();i++){
-                JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-                String Id = jsonChildNode.optString("NPI");
-                String First_Name = jsonChildNode.optString("Provider First Name");
-                String Last_Name = jsonChildNode.optString("Provider Last Name");
+            First_Name=new String[jarray.length()];
+            Last_Name=new String[jarray.length()];
+            JSONObject jobject=null;
+            for(int i=0;i<=jarray.length();i++){
+                jobject=jarray.getJSONObject(i);
 
-                String outPut = First_Name+ "-" +Last_Name;
-                employeeList.add(createEmployee("employees", outPut));
+                First_Name[i]=jobject.getString("Provider First Name");
+                Last_Name[i]=jobject.getString("Provider Last Name");
             }
+
+
+        } catch (Exception e) {
+            Log.e("JSON Parser", "Error parsing data " + e.toString());
         }
-        catch(JSONException e){
-            Toast.makeText(getApplicationContext(), "Error"+e.toString(), Toast.LENGTH_SHORT).show();
-        }
-    }
+        lv.setAdapter(new MyAdapter(this,First_Name,Last_Name));
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-    private HashMap<String, String>createEmployee(String name,String number){
-        HashMap<String, String> employeeNameNo = new HashMap<String, String>();
-        employeeNameNo.put(name, number);
-        return employeeNameNo;
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_second, menu);
-        return true;
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
+                Toast.makeText(getApplicationContext(),First_Name[position], Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

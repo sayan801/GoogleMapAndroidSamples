@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndroidCustomProgress.iml" filepath="$PROJECT_DIR$/AndroidCustomProgress.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AndroidPreDataLoad.iml" filepath="$PROJECT_DIR$/AndroidPreDataLoad.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
