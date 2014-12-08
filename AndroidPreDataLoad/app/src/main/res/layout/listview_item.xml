@@ -76,27 +76,30 @@
             />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-
             android:orientation="horizontal"
             >
-            <RatingBar
-                android:id="@+id/showRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
 
-                android:numStars="5"
-                android:stepSize="3"
-                android:gravity="right"
-                android:isIndicator="true"
-                />
             <TextView
+                android:id="@+id/Txt_Lat"
                 android:layout_width="0dp"
-                android:gravity="left"
+                android:gravity="center"
                 android:layout_height="wrap_content"
-                android:text="(12 Reviews)"
+                android:text="AAA"
+                android:layout_weight="40"
+                android:textSize="10sp"
+                android:singleLine="true"
+                android:textColor="@android:color/black"
+                />
+
+            <TextView
+                android:id="@+id/Txt_Long"
+                android:layout_width="0dp"
+                android:layout_gravity="right"
+                android:layout_height="wrap_content"
+                android:text="AAA"
+                android:gravity="center"
                 android:layout_weight="40"
                 android:textSize="10sp"
                 android:singleLine="true"
@@ -104,6 +107,7 @@
                 />
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"

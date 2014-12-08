@@ -21,6 +21,7 @@ public class SharedPreferenceClass {
     // All Shared Preferences Keys
 
     public static final String KEY_SET_JSON_DATA = "KEY_SET_JSON_DATA";
+    public static final String KEY_SET_JSON_ADDRESS = "KEY_SET_JSON_ADDRESS";
 
     public SharedPreferenceClass(Context context){
         this._context = context;
@@ -40,5 +41,19 @@ public class SharedPreferenceClass {
     {
         String  ListID= pref.getString(KEY_SET_JSON_DATA, null);
         return ListID;
+    }
+
+    public void SetProviderLatLang(String ProviderLatLang)
+
+    {
+        editor.remove(KEY_SET_JSON_ADDRESS);
+        editor.putString(KEY_SET_JSON_ADDRESS, ProviderLatLang);
+        editor.commit();
+
+    }
+    public String GetProviderLatLang()
+    {
+        String  ProviderLatLang= pref.getString(KEY_SET_JSON_ADDRESS, null);
+        return  ProviderLatLang;
     }
 }

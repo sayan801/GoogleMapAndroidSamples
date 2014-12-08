@@ -20,12 +20,15 @@ public class MyAdapter extends BaseAdapter {
     String[] Country_Name;
     String[] Business_Address;
 
+
     public MyAdapter(Context context, String[] FName, String[] LName, String[] CNTY_Name, String[] Business_Address) {
         this.context=context;
         this.First_Name=FName;
         this.Last_Name=LName;
         this.Country_Name=CNTY_Name;
         this.Business_Address=Business_Address;
+
+
     }
 
     @Override
@@ -56,10 +59,12 @@ public class MyAdapter extends BaseAdapter {
         TextView CountryName=(TextView) rowView.findViewById(R.id.tv_country);
         TextView BusinessAddress=(TextView) rowView.findViewById(R.id.tv_business);
 
+
         FirstName.setText(First_Name[position]);
         LastName.setText(Last_Name[position]);
         CountryName.setText(Country_Name[position]);
         BusinessAddress.setText(Business_Address[position]);
+
        // String str1=nameID[position];
 
         return rowView;

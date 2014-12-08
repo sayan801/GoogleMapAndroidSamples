@@ -26,6 +26,10 @@ public class SecondActivity extends Activity {
     String[] Last_Name;
     String[] Country_Name;
     String[] Business_Address;
+    String[] ProviderLat;
+    String[] ProviderLong;
+
+    public String GetAddressLatLong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +50,12 @@ public class SecondActivity extends Activity {
         TvActionbarTitle.setText("PROVIDER DETAILS");
         TvActionbarTitle.setTextColor(Color.parseColor("#FFFFFF"));
 
-
-
         strJson = sharedPrefClassObj.GetListData();
+        GetAddressLatLong=sharedPrefClassObj.GetProviderLatLang();
+
+      //  String Add=strJson+" "+GetAddressLatLong;
+        //Log.d("Good",GetAddressLatLong);
+       // Log.d("Add",Add);
 
         lv=(ListView) findViewById(R.id.listView1);
 
@@ -76,7 +83,33 @@ public class SecondActivity extends Activity {
         } catch (Exception e) {
             Log.e("JSON Parser", "Error parsing data " + e.toString());
         }
+
+
+
+                        try {
+                            JSONObject jobj=new JSONObject(GetAddressLatLong);
+
+                            JSONArray jarray=jobj.getJSONArray("");
+
+                            ProviderLat=new String[jarray.length()];
+                            ProviderLong=new String[jarray.length()];
+
+                            JSONObject jobject=null;
+                            for(int i=0;i<=jarray.length();i++){
+                                jobject=jarray.getJSONObject(i);
+
+                                ProviderLat[i]=jobject.getString("ProviderLatitude");
+                                ProviderLong[i]=jobject.getString("ProviderLongitude");
+
+                                }
+
+
+                        } catch (Exception e) {
+                            Log.e("JSON Parser", "Error parsing data " + e.toString());
+                        }
+
         lv.setAdapter(new MyAdapter(this,First_Name,Last_Name,Country_Name,Business_Address));
+      //  lv.setAdapter(new AddressAdapter(this.ProviderLat));
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
