@@ -2,20 +2,16 @@ package com.amiyo.technicise.androidcustomprogress;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import org.json.JSONArray;
@@ -23,330 +19,208 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class MainActivity extends Activity {
 
-    Button Btngetdata;
+    private final String TAG = "CustomProgressBarActivity ";
+    /**
+     * URl to parse the json array object.
+     */
+    protected static String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/" +
+            "getProviderInfoByPartialNameZipDistance/davis/66213/1";
+    protected static String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/" +
+            "geocoding/getLatLongFromAddress/";
+
+
+    App app;
+   // DataTransporter dataTransporter;
+   SharedPreferenceClass sharedPrefClassObj;
+
+    /**
+     * Layout Views.
+     */
+    public Button BtnLoad;
     public ProgressBar MyProgressBar;
+    public String jsonResponse,jsonData,callAddress,provideraddress;
 
-    JSONArray news = null;
+    public String ProviderFirstLineBusinessMailingAddress,ProviderBusinessMailingAddressCityName,ProviderBusinessMailingAddressStateName,
+                  ProviderBusinessMailingAddressPostalCode,ProviderSecondLineBusinessMailingAddress;
 
-    //URL to get JSON Array
-    static String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/davis/66213/1";
-
-    static String address="http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
-
-
-    public String  strJson,StrJsonTest,CallAddress;
-    int k=0,  number = 1,  reviews=0;
-
-    String npiProvideraddress, ProviderFirstLineBusinessMailingAddress, ProviderBusinessMailingAddressCityName, ProviderBusinessMailingAddressStateName, ProviderBusinessMailingAddressFaxNumber,
-            ProviderBusinessMailingAddressPostalCode, providerName=null,
-            npiID, ProviderSecondLineBusinessMailingAddress;
-
-    public TextView mTextViewSpeciality, mTextViewName, mTextViewAddress, mTextViewNpiId;
-
-    JSONArray jArray,LatLngArry;
-    JSONObject JsonObjectLatLng;
-
-    List<HashMap<String, Object>> npidata = null;
-    Map<String, String> latLongHashMap = new HashMap<String, String>();
-
-    ArrayList<HashMap<String, String>> mArrayList = new ArrayList<HashMap<String, String>>();
-
-    ArrayList<HashMap<String, Object>> mArrayListLatLong = new ArrayList<HashMap<String, Object>>();
-
-    public ListView mListView; // show search provider data
-    public MyAdapter adapter;
+    public JSONArray jsonLatLongArray;
+    public JSONObject jsonObjectLatLng;
+    public ArrayList<HashMap<String, Object>> arrayListLatLong = new ArrayList<HashMap<String, Object>>();
+    public String ProviderLatitude, ProviderLongitude;
+    public ServiceHandler serviceHandler = new ServiceHandler();
     public ImageView view;
-    SharedPreferenceClass sharedPrefClassObj;
-    String ProviderLatitude,ProviderLongitude;
-    ServiceHandler sh = new ServiceHandler();
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        app = (App) getApplication();
         sharedPrefClassObj = new SharedPreferenceClass(getApplicationContext());
-        MyProgressBar=(ProgressBar)findViewById(R.id.CustomProgressBar);
-        Btngetdata = (Button)findViewById(R.id.getdata);
 
-        mListView = (ListView) findViewById(R.id.searchedProviderListView);
+        MyProgressBar = (ProgressBar) findViewById(R.id.CustomProgressBar);
+        BtnLoad = (Button) findViewById(R.id.ButtonLoad);
 
         ActionBarDynamic actionbardynamic = new ActionBarDynamic();
-        String colorCode="#54D66A";
+        String colorCode = "#54D66A";
         actionbardynamic.DynamicActionBar(getActionBar(), colorCode);
         ActionBar ab = getActionBar();
         ab.setCustomView(R.layout.custom_actionbar_layout);
 
-        view = (ImageView)findViewById(android.R.id.home);
+        view = (ImageView) findViewById(android.R.id.home);
         view.setPadding(20, 0, 0, 0);
 
-        TextView TvActionbarTitle=(TextView)findViewById(R.id.TvActionBarTitle);
+        TextView TvActionbarTitle = (TextView) findViewById(R.id.TvActionBarTitle);
         TvActionbarTitle.setText("PROVIDER DETAILS");
         TvActionbarTitle.setTextColor(Color.parseColor("#FFFFFF"));
 
-        Btngetdata.setOnClickListener(new View.OnClickListener() {
+    }
 
-            @Override
-            public void onClick(View v) {
-                new MyTask().execute();
-               // Log.d("URL",url);
-                MyProgressBar.setVisibility(View.VISIBLE);
+    public void LoadingData(View i) {
 
-            }
-        });
-        adapter = new MyAdapter(this, R.layout.list_item_provideronmap);
-        mListView.setAdapter(adapter);
-        mListView.setVisibility(View.GONE);
-
+       new PareJSON().execute();
 
     }
 
 
-    /** Async Task that send a request to url * */
-    class MyAdapter extends ArrayAdapter<String>
-    {
-        LayoutInflater inflater;
-
-        public MyAdapter(Context context, int textViewResourceId)
-        {
-            super(context, textViewResourceId);
-            inflater = LayoutInflater.from(context);
-        }
-
+    /**
+     * Private Class for Parsing the JSON over the Internet.
+     */
+    private class PareJSON extends AsyncTask<Void, Void, Void> {
         @Override
-        public int getCount()
-        {
-            return mArrayList.size();
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-            convertView = inflater.inflate(R.layout.list_item_provideronmap, null);
-
-            mTextViewSpeciality = (TextView) convertView.findViewById(R.id.TxtSpeciality);
-            mTextViewName = (TextView) convertView.findViewById(R.id.TxtProviderName);
-            mTextViewAddress = (TextView) convertView.findViewById(R.id.TxtProviderAddress);
-            mTextViewNpiId = (TextView) convertView.findViewById(R.id.TxtProviderNPIid);
-
-            mTextViewSpeciality.setText(mArrayList.get(position).get("speciality" + position));
-            mTextViewName.setText(mArrayList.get(position).get("name" + position));
-            mTextViewAddress.setText(mArrayList.get(position).get("address"+position));
-            mTextViewNpiId.setText(mArrayList.get(position).get("npiid"+position));
-
-            return convertView;
-        }
-    }
-    class MyTask extends AsyncTask<Void, Void, Void>
-    {
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
             super.onPreExecute();
-
+            MyProgressBar.setVisibility(View.VISIBLE);
         }
+
         @Override
-        protected Void doInBackground(Void... params)
-        {
-            // Creating service handler class instance
-            ServiceHandler sh = new ServiceHandler();
+        protected Void doInBackground(Void... params) {
+            // Creating instance of service handler class.
+            ServiceHandler serviceHandler = new ServiceHandler();
 
-            // Making a request to url and getting response
-              strJson = sh.makeServiceCall(url, ServiceHandler.GET);
-
-            try
-            {
-                JSONObject jObject = new JSONObject(strJson);
-
-                npidata = parse(jObject);
-                sharedPrefClassObj.SetListData(strJson);
-               // Log.d("JsonData",strJson);
-            }
-            catch (Exception ex)  {   }
+            // Making a request to url and getting the response
+            jsonResponse = serviceHandler.makeServiceCall(url, ServiceHandler.GET);
+            parseLatLang(jsonResponse);
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void result)
-        {
-           adapter.notifyDataSetChanged();
-           MyProgressBar.setVisibility(View.GONE);
+        protected void onPostExecute(Void result) {
+            MyProgressBar.setVisibility(View.GONE);
 
-            Intent a = new Intent(getApplicationContext(),SecondActivity.class);
-            sharedPrefClassObj.SetListData(strJson);
-            sharedPrefClassObj.SetProviderLatLang(String.valueOf(mArrayListLatLong));
-            startActivity(a);
+            app.setDataLoadOnListView(sharedPrefClassObj);
 
-
+            //Fire an Intent.
+            Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
+            intent.setAction(SharedPreferenceClass.INTENT_ACTION_OPEN);
+            startActivity(intent);
         }
     }
 
-    /* start #### */
-    // Receives a JSONObject and returns a list
-    public List<HashMap<String,Object>> parse(JSONObject jObject)
-    {
-        try
-        {
-            // Retrieves all the elements in the 'countries' array
-            jArray = jObject.getJSONArray("npidata");
-        }
-        catch (JSONException e)
-        {
-            //e.printStackTrace();
-        }
-        return getCountries(jArray);
-    }
 
-    private List<HashMap<String, Object>> getCountries(JSONArray jCountries)
-    {
-        List<HashMap<String, Object>> countryList = new ArrayList<HashMap<String,Object>>();
-        HashMap<String, Object> provider = null;
+    public void parseLatLang(String jsonData) {
+        try {
 
-            try
-            {
-                //default first time load max. 10 result
-                for(int i=0; i < jCountries.length(); i++)
-                {
-                    // Call getCountry with country JSON object to parse the country
-                    provider = getCountry((JSONObject)jCountries.get(i));
-                    countryList.add(provider);
+            sharedPrefClassObj.setJSONData(jsonResponse);
+            JSONObject jsonObject = new JSONObject(jsonData);
+            JSONArray jsonArray = jsonObject.getJSONArray("npidata");
+
+                sharedPrefClassObj.setLat(jsonArray.length());
+                sharedPrefClassObj.setLang(jsonArray.length());
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String[] lat_lang = getLatLong(jsonArray.getJSONObject(i));
+                    sharedPrefClassObj.getLat()[i] = lat_lang[0];
+                    sharedPrefClassObj.getLang()[i] = lat_lang[1];
                 }
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-            }
-
-        return countryList;
+        } catch (JSONException error) {
+            Log.e(TAG, error.toString());
+            error.printStackTrace();
+        }
     }
 
-    // Parsing the Country JSON object
-    private HashMap<String, Object> getCountry(JSONObject c)
-    {
+    private String[] getLatLong(JSONObject jsonObject) {
         HashMap<String, Object> provider = new HashMap<String, Object>();
-        try
-        {
-            if(c.has("NPI"))
-                npiID = c.getString("NPI");
-            else
-                npiID = "0000000000";
-
-
-            if (c.has("Provider First Line Business Practice Location Address"))
-                ProviderFirstLineBusinessMailingAddress = c.getString("Provider First Line Business Practice Location Address");
-            else
+        String[] lat_lang = new String[2];
+        try {
+            if (jsonObject.has("Provider First Line Business Practice Location Address")) {
+                ProviderFirstLineBusinessMailingAddress = jsonObject.getString("Provider First Line Business Practice Location Address");
+            } else {
                 ProviderFirstLineBusinessMailingAddress = " ";
+            }
 
-            if (c.has("Provider Second First Line Business Practice Location Address"))
-                ProviderSecondLineBusinessMailingAddress = c.getString("Provider Second First Line Business Practice Location Address");
-            else
+            if (jsonObject.has("Provider Second First Line Business Practice Location Address")) {
+                ProviderSecondLineBusinessMailingAddress = jsonObject.getString("Provider Second First Line Business Practice Location Address");
+            } else {
                 ProviderSecondLineBusinessMailingAddress = " ";
+            }
 
-
-            if (c.has("Provider Business Practice Location Address City Name"))
-                ProviderBusinessMailingAddressCityName = c.getString("Provider Business Practice Location Address City Name");
-            else
+            if (jsonObject.has("Provider Business Practice Location Address City Name")) {
+                ProviderBusinessMailingAddressCityName = jsonObject.getString("Provider Business Practice Location Address City Name");
+            } else {
                 ProviderBusinessMailingAddressCityName = " ";
+            }
 
-            if (c.has("Provider Business Practice Location Address State Name"))
-                ProviderBusinessMailingAddressStateName = c.getString("Provider Business Practice Location Address State Name");
-            else
+            if (jsonObject.has("Provider Business Practice Location Address State Name")) {
+                ProviderBusinessMailingAddressStateName = jsonObject.getString("Provider Business Practice Location Address State Name");
+            } else {
                 ProviderBusinessMailingAddressStateName = " ";
+            }
 
-
-            if (c.has("Provider Business Practice Location Address Postal Code"))
-                ProviderBusinessMailingAddressPostalCode = c.getString("Provider Business Practice Location Address Postal Code");
-            else
+            if (jsonObject.has("Provider Business Practice Location Address Postal Code")) {
+                ProviderBusinessMailingAddressPostalCode = jsonObject.getString("Provider Business Practice Location Address Postal Code");
+            } else {
                 ProviderBusinessMailingAddressPostalCode = " ";
-
+            }
 
             //take first 5 digit of provider Zip code
-            ProviderBusinessMailingAddressPostalCode = ProviderBusinessMailingAddressPostalCode.substring(0, Math.min(ProviderBusinessMailingAddressPostalCode.length(), 5));
+            ProviderBusinessMailingAddressPostalCode = ProviderBusinessMailingAddressPostalCode
+                    .substring(0, Math.min(ProviderBusinessMailingAddressPostalCode.length(), 5));
 
-            npiProvideraddress = ProviderFirstLineBusinessMailingAddress + ", " + ProviderSecondLineBusinessMailingAddress + ", " +
-                    ProviderBusinessMailingAddressCityName + ", " + ProviderBusinessMailingAddressStateName  +", "+ ProviderBusinessMailingAddressPostalCode;
+            provideraddress = ProviderFirstLineBusinessMailingAddress + ", " +
+                    ProviderSecondLineBusinessMailingAddress + ", " +
+                    ProviderBusinessMailingAddressCityName + ", " +
+                    ProviderBusinessMailingAddressStateName + ", " +
+                    ProviderBusinessMailingAddressPostalCode;
 
+            provideraddress = provideraddress.replace(" ", "+");
+            provideraddress = provideraddress.replace("?", "");   //'Disallowed Key Characters.'
+            provideraddress = provideraddress.replace("#", "");
 
-            npiProvideraddress = npiProvideraddress.replace(" ", "+");
-            npiProvideraddress = npiProvideraddress.replace("?", "");   //'Disallowed Key Characters.'
-            npiProvideraddress = npiProvideraddress.replace("#", "");
+            if (provideraddress == null || provideraddress.isEmpty())
+                provideraddress = "addressnotfound"; // will return 'unknown' lat-long and prevented app crash
 
+            /////////////// API CALL //////////////////
 
-            if(npiProvideraddress.isEmpty() || npiProvideraddress.equals(null) || npiProvideraddress == null)
-                npiProvideraddress="addressnotfound"; // will return 'unknown' lat-long and prevented app crash
+            callAddress = address + provideraddress;
+            jsonData = serviceHandler.makeServiceCall(callAddress, ServiceHandler.GET);
+            JSONObject JObjectFetchAddress = new JSONObject(jsonData);
+            jsonLatLongArray = JObjectFetchAddress.getJSONArray("result");
 
-           /////////////// API CALL //////////////////
+            jsonObjectLatLng = jsonLatLongArray.getJSONObject(0);
 
-            CallAddress=address+npiProvideraddress;
-            StrJsonTest = sh.makeServiceCall(CallAddress, ServiceHandler.GET);
+            if (jsonObjectLatLng.getString("status").equals("OK")) {
+                ProviderLatitude = String.valueOf(jsonObjectLatLng.getDouble("latitude"));
+                ProviderLongitude = String.valueOf(jsonObjectLatLng.getDouble("longitude"));
 
-            JSONObject JObjectFetchAddress = new JSONObject(StrJsonTest);
+                provider.put("ProviderLatitude", ProviderLatitude);
+                provider.put("ProviderLongitude", ProviderLongitude);
 
-            LatLngArry = JObjectFetchAddress.getJSONArray("result");
-
-            JsonObjectLatLng = LatLngArry.getJSONObject(0);
-
-            if(JsonObjectLatLng.getString("status").equals("OK"))
-            {
-                ProviderLatitude = String.valueOf(JsonObjectLatLng.getDouble("latitude"));
-                ProviderLongitude = String.valueOf(JsonObjectLatLng.getDouble("longitude"));
-
-                provider.put("ProviderLatitude", ProviderLatitude.toString());
-                provider.put("ProviderLongitude", ProviderLongitude.toString());
-                mArrayListLatLong.add(provider);
-
-                sharedPrefClassObj.SetProviderLatLang(String.valueOf(mArrayListLatLong));
-
-
-             }
-
-
-            else
-            {
-                latLongHashMap.put("latitude" + k, null);
-                latLongHashMap.put("longitude" + k, null);
+                lat_lang[0] = ProviderLatitude;
+                lat_lang[1] = ProviderLongitude;
+                arrayListLatLong.add(provider);
             }
-
-
-
-            latLongHashMap.put("latitude" + k, null);
-            latLongHashMap.put("longitude" + k, null);
-
-
-            latLongHashMap.put("npi_id" + k, npiID);
-            latLongHashMap.put("review" + k, reviews+"");
-            latLongHashMap.put("name" + k, providerName);
-            latLongHashMap.put("address" + k, npiProvideraddress.replace("+", " "));
-
-
-            k++;
-            reviews++;
-            if(reviews == 6)
-                reviews = 0;
-
-
-            HashMap<String, String> providerData = new HashMap<String, String>();
-
-            providerData.put("name"+(number-1), providerName + " " );
-            providerData.put("address"+(number-1), npiProvideraddress );
-            providerData.put("npiid"+(number-1), npiID );
-            mArrayList.add(providerData);
-            number += 1;
-
-
-
+        } catch (Exception error) {
+            Log.e(TAG, error.toString());
         }
-        catch (Exception e)  {  }
-        return provider;
+
+        return lat_lang;
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

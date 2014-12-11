@@ -1,10 +1,6 @@
 package com.amiyo.technicise.androidcustomprogress;
 
-import android.widget.ListAdapter;
-
-/**
- * Created by technicise on 6/12/14.
- */
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,62 +8,84 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+/**
+ * Adapter is used for showing the json array data to the list.
+ */
 public class MyAdapter extends BaseAdapter {
 
-    String[] First_Name;
-    String[] Last_Name;
-    Context context;
-    String[] Country_Name;
-    String[] Business_Address;
+    private String[] firstName;
+    private String[] lastName;
+    private Context context;
+    private String[] countryName;
+    private String[] businessAddress;
+    private String[] lat;
+    private String[] lang;
 
+    public MyAdapter(Context context, DataHolder holder) {
 
-    public MyAdapter(Context context, String[] FName, String[] LName, String[] CNTY_Name, String[] Business_Address) {
-        this.context=context;
-        this.First_Name=FName;
-        this.Last_Name=LName;
-        this.Country_Name=CNTY_Name;
-        this.Business_Address=Business_Address;
-
-
+        this.context = context;
+        this.firstName = holder.firstName;
+        this.lastName = holder.lastName;
+        this.countryName = holder.countryName;
+        this.businessAddress = holder.businessAddress;
+        this.lat = holder.lat;
+        this.lang = holder.lang;
     }
 
     @Override
     public int getCount() {
-        // TODO Auto-generated method stub
-        return First_Name.length;
+        return firstName.length;
     }
 
     @Override
     public Object getItem(int position) {
-        // TODO Auto-generated method stub
         return position;
     }
 
     @Override
     public long getItemId(int position) {
-        // TODO Auto-generated method stub
         return position;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater=(LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-        View rowView=inflater.inflate(R.layout.listview_item, parent,false);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        ViewHolder holder = null;
 
-        TextView FirstName=(TextView) rowView.findViewById(R.id.tv_headLn);
-        TextView LastName=(TextView) rowView.findViewById(R.id.tv_dateLn);
-        TextView CountryName=(TextView) rowView.findViewById(R.id.tv_country);
-        TextView BusinessAddress=(TextView) rowView.findViewById(R.id.tv_business);
+        if (convertView == null ) {
+            convertView = inflater.inflate(R.layout.listview_item, null);
+            holder = new ViewHolder();
+            holder.FirstName = (TextView) convertView.findViewById(R.id.tv_headLn);
+            holder.LastName = (TextView) convertView.findViewById(R.id.tv_dateLn);
+            holder.CountryName = (TextView) convertView.findViewById(R.id.tv_country);
+            holder.BusinessAddress = (TextView) convertView.findViewById(R.id.tv_business);
+            holder.Lat = (TextView) convertView.findViewById(R.id.Txt_Lat);
+            holder.Lang = (TextView) convertView.findViewById(R.id.Txt_Long);
+            //tag the holder object to the convert view so that the object can recycle every time.
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+        holder.FirstName.setText(firstName[position]);
+        holder.LastName.setText(lastName[position]);
+        holder.CountryName.setText(countryName[position]);
+        holder.BusinessAddress.setText(businessAddress[position]);
+        holder.Lat.setText(lat[position]);
+        holder.Lang.setText(lang[position]);
+       return convertView;
+    }
 
 
-        FirstName.setText(First_Name[position]);
-        LastName.setText(Last_Name[position]);
-        CountryName.setText(Country_Name[position]);
-        BusinessAddress.setText(Business_Address[position]);
+    @SuppressWarnings("UnusedDeclaration")
+    public static  class ViewHolder {
+        TextView FirstName;
+        TextView LastName;
+        TextView CountryName;
+        TextView BusinessAddress;
+        TextView Lat;
+        TextView Lang;
 
-       // String str1=nameID[position];
-
-        return rowView;
     }
 
 }

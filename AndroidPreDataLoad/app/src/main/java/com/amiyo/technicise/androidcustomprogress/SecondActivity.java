@@ -18,23 +18,29 @@ import org.json.JSONObject;
 
 public class SecondActivity extends Activity {
 
-    SharedPreferenceClass sharedPrefClassObj;
-    String strJson;
-    public ImageView view;
-    ListView lv;
-    String[] First_Name;
-    String[] Last_Name;
-    String[] Country_Name;
-    String[] Business_Address;
-    String[] ProviderLat;
-    String[] ProviderLong;
 
-    public String GetAddressLatLong;
+    SharedPreferenceClass sharedPrefClassObj;
+    private final String TAG = "SecondActivity ";
+
+    private App app;
+    private ListView listView;
+
+    public String jsonData;
+    public String[] firstName;
+    public String[] lastName;
+    public String[] countryName;
+    public String[] businessAddress;
+    public String[] lat;
+    public String[] lang;
+    public String addressLatLong;
+    public ImageView view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
+       // dataTransporter = new DataTransporter(getApplicationContext());
+
         sharedPrefClassObj = new SharedPreferenceClass(getApplicationContext());
 
         ActionBarDynamic actionbardynamic = new ActionBarDynamic();
@@ -50,74 +56,58 @@ public class SecondActivity extends Activity {
         TvActionbarTitle.setText("PROVIDER DETAILS");
         TvActionbarTitle.setTextColor(Color.parseColor("#FFFFFF"));
 
-        strJson = sharedPrefClassObj.GetListData();
-        GetAddressLatLong=sharedPrefClassObj.GetProviderLatLang();
+        app = (App) getApplication();
+        sharedPrefClassObj = app.getDataLoadOnListView();
 
-      //  String Add=strJson+" "+GetAddressLatLong;
-        //Log.d("Good",GetAddressLatLong);
-       // Log.d("Add",Add);
+        jsonData = sharedPrefClassObj.getJSONData();
+        lat = sharedPrefClassObj.getLat();
+        lang = sharedPrefClassObj.getLang();
 
-        lv=(ListView) findViewById(R.id.listView1);
+        listView = (ListView) findViewById(R.id.listView1);
 
         try {
-            JSONObject jobj=new JSONObject(strJson);
+            JSONObject jsonObject = new JSONObject(jsonData);
 
-            JSONArray jarray=jobj.getJSONArray("npidata");
+            JSONArray jsonArray = jsonObject.getJSONArray("npidata");
 
-            First_Name=new String[jarray.length()];
-            Last_Name=new String[jarray.length()];
-            Country_Name=new String[jarray.length()];
-            Business_Address=new String[jarray.length()];
+            firstName = new String[jsonArray.length()];
+            lastName = new String[jsonArray.length()];
+            countryName = new String[jsonArray.length()];
+            businessAddress = new String[jsonArray.length()];
 
-            JSONObject jobject=null;
-            for(int i=0;i<=jarray.length();i++){
-                jobject=jarray.getJSONObject(i);
+            JSONObject jsonObject1;
+            for( int i = 0; i < jsonArray.length(); i++ ) {
+                jsonObject1 = jsonArray.getJSONObject(i);
 
-                First_Name[i]=jobject.getString("Provider First Name");
-                Last_Name[i]=jobject.getString("Provider Last Name");
-                Country_Name[i]=jobject.getString("Provider Business Mailing Address Country Code");
-                Business_Address[i]=jobject.getString("Provider First Line Business Practice Location Address");
+
+                firstName[i] = jsonObject1.getString("Provider First Name");
+                lastName[i] = jsonObject1.getString("Provider Last Name");
+                countryName[i] = jsonObject1.getString("Provider Business Mailing Address Country Code");
+                businessAddress[i] = jsonObject1.getString("Provider First Line Business Practice Location Address");
             }
-
-
-        } catch (Exception e) {
-            Log.e("JSON Parser", "Error parsing data " + e.toString());
+        } catch (Exception error) {
+            Log.e(TAG, error.toString());
+            error.printStackTrace();
         }
 
+        //data holder.
+        DataHolder dataHolder = new DataHolder();
+        dataHolder.firstName = firstName;
+        dataHolder.lastName = lastName;
+        dataHolder.businessAddress = businessAddress;
+        dataHolder.countryName = countryName;
+        dataHolder.lat = lat;
+        dataHolder.lang = lang;
 
-
-                        try {
-                            JSONObject jobj=new JSONObject(GetAddressLatLong);
-
-                            JSONArray jarray=jobj.getJSONArray("");
-
-                            ProviderLat=new String[jarray.length()];
-                            ProviderLong=new String[jarray.length()];
-
-                            JSONObject jobject=null;
-                            for(int i=0;i<=jarray.length();i++){
-                                jobject=jarray.getJSONObject(i);
-
-                                ProviderLat[i]=jobject.getString("ProviderLatitude");
-                                ProviderLong[i]=jobject.getString("ProviderLongitude");
-
-                                }
-
-
-                        } catch (Exception e) {
-                            Log.e("JSON Parser", "Error parsing data " + e.toString());
-                        }
-
-        lv.setAdapter(new MyAdapter(this,First_Name,Last_Name,Country_Name,Business_Address));
-      //  lv.setAdapter(new AddressAdapter(this.ProviderLat));
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
+        listView.setAdapter(new MyAdapter(this, dataHolder));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
-                Toast.makeText(getApplicationContext(),First_Name[position], Toast.LENGTH_SHORT).show();
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+                Toast.makeText(getApplicationContext(), firstName[position], Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)

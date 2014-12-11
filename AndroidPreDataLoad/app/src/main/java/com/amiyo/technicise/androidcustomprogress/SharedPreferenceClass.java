@@ -8,52 +8,46 @@ import android.content.SharedPreferences;
  */
 public class SharedPreferenceClass {
 
-    // Shared Preferences
-    SharedPreferences pref;
-    // Editor for Shared preferences
-    SharedPreferences.Editor editor;
-    // Context
-    Context _context;
-    // Shared pref mode
+    public static String INTENT_ACTION_OPEN = "INTENT_ACTION_OPEN";
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
     int PRIVATE_MODE = 0;
-    // Sharedpref file name
     private static final String PREF_NAME = "MyPref";
-    // All Shared Preferences Keys
 
     public static final String KEY_SET_JSON_DATA = "KEY_SET_JSON_DATA";
     public static final String KEY_SET_JSON_ADDRESS = "KEY_SET_JSON_ADDRESS";
-
     public SharedPreferenceClass(Context context){
-        this._context = context;
-        pref = _context.getSharedPreferences(PREF_NAME, 0);
+        pref = context.getSharedPreferences(PREF_NAME, 0);
         editor = pref.edit();
     }
 
-    public void SetListData(String ListID)
-
-    {
+    public void setJSONData(String ListID) {
         editor.remove(KEY_SET_JSON_DATA);
         editor.putString(KEY_SET_JSON_DATA, ListID);
         editor.commit();
+      }
 
-    }
-    public String GetListData()
-    {
-        String  ListID= pref.getString(KEY_SET_JSON_DATA, null);
-        return ListID;
+    public String getJSONData() {
+        return pref.getString(KEY_SET_JSON_DATA, null);
     }
 
-    public void SetProviderLatLang(String ProviderLatLang)
+    private String[] lat;
 
-    {
-        editor.remove(KEY_SET_JSON_ADDRESS);
-        editor.putString(KEY_SET_JSON_ADDRESS, ProviderLatLang);
-        editor.commit();
-
+    public void setLat(int length) {
+        lat = new String[length];
     }
-    public String GetProviderLatLang()
-    {
-        String  ProviderLatLang= pref.getString(KEY_SET_JSON_ADDRESS, null);
-        return  ProviderLatLang;
+
+    public String[] getLat( ) {
+        return lat;
+    }
+
+    private String[] lang;
+
+    public void setLang(int length) {
+        lang = new String[length];
+    }
+
+    public String[] getLang( ) {
+        return lang;
     }
 }
