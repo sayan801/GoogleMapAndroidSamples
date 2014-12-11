@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 public class MainActivity extends Activity {
 
     private final String TAG = "CustomProgressBarActivity ";
+
     /**
      * URl to parse the json array object.
      */
@@ -32,14 +35,19 @@ public class MainActivity extends Activity {
     protected static String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/" +
             "geocoding/getLatLongFromAddress/";
 
-
-    App app;
+   App app;
    // DataTransporter dataTransporter;
    SharedPreferenceClass sharedPrefClassObj;
+
+    // flag for Internet connection status
+    Boolean isInternetPresent = false;
+    // Connection detector class
+    ConnectionDetector cd;
 
     /**
      * Layout Views.
      */
+
     public Button BtnLoad;
     public ProgressBar MyProgressBar;
     public String jsonResponse,jsonData,callAddress,provideraddress;
@@ -79,12 +87,27 @@ public class MainActivity extends Activity {
         TvActionbarTitle.setText("PROVIDER DETAILS");
         TvActionbarTitle.setTextColor(Color.parseColor("#FFFFFF"));
 
+        // creating connection detector class instance
+        cd = new ConnectionDetector(getApplicationContext());
+
     }
 
     public void LoadingData(View i) {
 
-       new PareJSON().execute();
+        // get Internet status
+        isInternetPresent = cd.isConnectingToInternet();
 
+        // check for Internet status
+        if (isInternetPresent) {
+            // Internet Connection is Present
+            // make HTTP requests
+            new PareJSON().execute();
+
+        } else {
+            // Internet connection is not present
+            // Ask user to connect to Internet
+            Toast.makeText(getApplicationContext(), "Connection Unavailable",Toast.LENGTH_SHORT).show();
+        }
     }
 
 

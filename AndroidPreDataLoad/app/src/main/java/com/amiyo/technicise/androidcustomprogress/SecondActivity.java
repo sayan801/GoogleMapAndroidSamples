@@ -18,13 +18,11 @@ import org.json.JSONObject;
 
 public class SecondActivity extends Activity {
 
-
     SharedPreferenceClass sharedPrefClassObj;
     private final String TAG = "SecondActivity ";
 
     private App app;
     private ListView listView;
-
     public String jsonData;
     public String[] firstName;
     public String[] lastName;
@@ -32,14 +30,12 @@ public class SecondActivity extends Activity {
     public String[] businessAddress;
     public String[] lat;
     public String[] lang;
-    public String addressLatLong;
     public ImageView view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-       // dataTransporter = new DataTransporter(getApplicationContext());
 
         sharedPrefClassObj = new SharedPreferenceClass(getApplicationContext());
 
@@ -103,7 +99,7 @@ public class SecondActivity extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), firstName[position], Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), firstName[position]+lastName[position], Toast.LENGTH_SHORT).show();
             }
         });
     }
