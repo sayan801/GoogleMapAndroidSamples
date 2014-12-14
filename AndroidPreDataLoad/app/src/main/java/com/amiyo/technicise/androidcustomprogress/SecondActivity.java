@@ -2,8 +2,10 @@ package com.amiyo.technicise.androidcustomprogress;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,12 +14,20 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Marker;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
 
-public class SecondActivity extends Activity {
 
+public class SecondActivity extends FragmentActivity implements View.OnClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
+{
     SharedPreferenceClass sharedPrefClassObj;
     private final String TAG = "SecondActivity ";
 
@@ -31,6 +41,24 @@ public class SecondActivity extends Activity {
     public String[] lat;
     public String[] lang;
     public ImageView view;
+
+    /** * @param context * @param dipValue * @return  */
+    public static int dip2px(Context context, float dipValue)
+    {
+        if (context == null) {
+            return (int) dipValue;
+        }
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dipValue * scale + 0.5f);
+    }
+
+    GoogleMap map;
+
+    HashMap<Integer, Marker> visibleMarkersGreen = new HashMap<Integer, Marker>();
+    HashMap<Integer, Marker> visibleMarkers = new HashMap<Integer, Marker>();
+    Map<String, String> latLongHashMap = new HashMap<String, String>();
+    Map<Integer, Integer> markerDetailsBlack = new HashMap<Integer, Integer>();
+    Map<Integer, Integer> markerDetailsGreen = new HashMap<Integer, Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +87,15 @@ public class SecondActivity extends Activity {
         lat = sharedPrefClassObj.getLat();
         lang = sharedPrefClassObj.getLang();
 
-        listView = (ListView) findViewById(R.id.listView1);
+       listView = (ListView) findViewById(R.id.listView1);
+
+        map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapProviderSearchResult)).getMap();
+        map.setOnMarkerClickListener(this);
+        map.setOnInfoWindowClickListener(this);
+        map.setPadding(0, 0, 0, 50); //Zoom in-Out Button will be Visible properly
+
+        visibleMarkers.clear();
+        visibleMarkersGreen.clear();
 
         try {
             JSONObject jsonObject = new JSONObject(jsonData);
@@ -122,4 +158,18 @@ public class SecondActivity extends Activity {
 
     }
 
+    @Override
+    public void onClick(View view) {
+
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return false;
+    }
 }
