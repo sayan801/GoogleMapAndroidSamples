@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +30,7 @@ public class MainActivity extends Activity {
      * URl to parse the json array object.
      */
     protected static String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/" +
-            "getProviderInfoByPartialNameZipDistance/davis/66213/1";
+            "getProviderInfoByPartialNameZipDistance/davis/66213/5";
     protected static String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/" +
             "geocoding/getLatLongFromAddress/";
 

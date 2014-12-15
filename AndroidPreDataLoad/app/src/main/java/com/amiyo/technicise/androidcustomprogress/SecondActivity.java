@@ -1,7 +1,6 @@
 package com.amiyo.technicise.androidcustomprogress;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,16 +13,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-
+import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class SecondActivity extends FragmentActivity implements View.OnClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
@@ -41,6 +41,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     public String[] lat;
     public String[] lang;
     public ImageView view;
+   Double ProviderLatitude, ProviderLongitude;
 
     /** * @param context * @param dipValue * @return  */
     public static int dip2px(Context context, float dipValue)
@@ -56,9 +57,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
     HashMap<Integer, Marker> visibleMarkersGreen = new HashMap<Integer, Marker>();
     HashMap<Integer, Marker> visibleMarkers = new HashMap<Integer, Marker>();
-    Map<String, String> latLongHashMap = new HashMap<String, String>();
-    Map<Integer, Integer> markerDetailsBlack = new HashMap<Integer, Integer>();
-    Map<Integer, Integer> markerDetailsGreen = new HashMap<Integer, Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +95,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         visibleMarkers.clear();
         visibleMarkersGreen.clear();
 
+
         try {
             JSONObject jsonObject = new JSONObject(jsonData);
 
@@ -111,7 +110,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             for( int i = 0; i < jsonArray.length(); i++ ) {
                 jsonObject1 = jsonArray.getJSONObject(i);
 
-
                 firstName[i] = jsonObject1.getString("Provider First Name");
                 lastName[i] = jsonObject1.getString("Provider Last Name");
                 countryName[i] = jsonObject1.getString("Provider Business Mailing Address Country Code");
@@ -124,12 +122,41 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
         //data holder.
         DataHolder dataHolder = new DataHolder();
-        dataHolder.firstName = firstName;
-        dataHolder.lastName = lastName;
-        dataHolder.businessAddress = businessAddress;
-        dataHolder.countryName = countryName;
-        dataHolder.lat = lat;
-        dataHolder.lang = lang;
+
+            dataHolder.firstName = firstName;
+            dataHolder.lastName = lastName;
+            dataHolder.businessAddress = businessAddress;
+            dataHolder.countryName = countryName;
+            dataHolder.lat = lat;
+            dataHolder.lang = lang;
+
+        try
+        {
+            JSONObject jsonObject = new JSONObject(jsonData);
+            JSONArray jsonArray = jsonObject.getJSONArray("npidata");
+            map.clear();
+            for (int i = 0; i < jsonArray.length(); i++)
+            {
+             ProviderLatitude = Double.valueOf(sharedPrefClassObj.getLat()[i]);
+             ProviderLongitude = Double.valueOf(sharedPrefClassObj.getLang()[i]);
+
+                map.addMarker(new MarkerOptions()
+                        .position(new LatLng(ProviderLatitude, ProviderLongitude))
+                        .title("Data "+i)
+                        .snippet("Lat:"+ProviderLatitude +"Long:"+ProviderLongitude+"Name:"+firstName)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.markerblack)));
+
+            }
+        }
+        catch (JSONException error)
+        {
+            Log.e(TAG, error.toString());
+            error.printStackTrace();
+        }
+
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(ProviderLatitude - 0.03, ProviderLongitude + 0.001), 12));
+
 
         listView.setAdapter(new MyAdapter(this, dataHolder));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
