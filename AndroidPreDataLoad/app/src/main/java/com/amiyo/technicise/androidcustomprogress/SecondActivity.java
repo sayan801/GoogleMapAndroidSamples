@@ -38,10 +38,12 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     public String[] lastName;
     public String[] countryName;
     public String[] businessAddress;
+    public String[] PostalCode;
     public String[] lat;
     public String[] lang;
     public ImageView view;
-   Double ProviderLatitude, ProviderLongitude;
+    Double ProviderLatitude, ProviderLongitude;
+    String ProviderName,ProviderAddress,ProviderPostalCode;
 
     /** * @param context * @param dipValue * @return  */
     public static int dip2px(Context context, float dipValue)
@@ -85,7 +87,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         lat = sharedPrefClassObj.getLat();
         lang = sharedPrefClassObj.getLang();
 
-       listView = (ListView) findViewById(R.id.listView1);
+        listView = (ListView) findViewById(R.id.listView1);
 
         map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapProviderSearchResult)).getMap();
         map.setOnMarkerClickListener(this);
@@ -105,15 +107,21 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             lastName = new String[jsonArray.length()];
             countryName = new String[jsonArray.length()];
             businessAddress = new String[jsonArray.length()];
+            PostalCode = new String[jsonArray.length()];
 
             JSONObject jsonObject1;
             for( int i = 0; i < jsonArray.length(); i++ ) {
                 jsonObject1 = jsonArray.getJSONObject(i);
 
+
                 firstName[i] = jsonObject1.getString("Provider First Name");
                 lastName[i] = jsonObject1.getString("Provider Last Name");
                 countryName[i] = jsonObject1.getString("Provider Business Mailing Address Country Code");
                 businessAddress[i] = jsonObject1.getString("Provider First Line Business Practice Location Address");
+                PostalCode[i] = jsonObject1.getString("Provider Business Mailing Address Postal Code");
+
+
+
             }
         } catch (Exception error) {
             Log.e(TAG, error.toString());
@@ -123,27 +131,46 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         //data holder.
         DataHolder dataHolder = new DataHolder();
 
-            dataHolder.firstName = firstName;
-            dataHolder.lastName = lastName;
-            dataHolder.businessAddress = businessAddress;
-            dataHolder.countryName = countryName;
-            dataHolder.lat = lat;
-            dataHolder.lang = lang;
+            dataHolder.firstName        = firstName;
+            dataHolder.lastName         = lastName;
+            dataHolder.businessAddress  = businessAddress;
+            dataHolder.countryName      = countryName;
+            dataHolder.lat              = lat;
+            dataHolder.lang             = lang;
+            dataHolder.PostalCode       =PostalCode;
 
         try
         {
             JSONObject jsonObject = new JSONObject(jsonData);
             JSONArray jsonArray = jsonObject.getJSONArray("npidata");
             map.clear();
+
+
+            JSONObject jsonObject2;
+
+
             for (int i = 0; i < jsonArray.length(); i++)
             {
              ProviderLatitude = Double.valueOf(sharedPrefClassObj.getLat()[i]);
              ProviderLongitude = Double.valueOf(sharedPrefClassObj.getLang()[i]);
 
+                jsonObject2 = jsonArray.getJSONObject(i);
+
+                firstName[i] = jsonObject2.getString("Provider First Name");
+                lastName[i] = jsonObject2.getString("Provider Last Name");
+                businessAddress[i] = jsonObject2.getString("Provider First Line Business Practice Location Address");
+                countryName[i] = jsonObject2.getString("Provider Business Mailing Address Country Code");
+                PostalCode[i] = jsonObject2.getString("Provider Business Mailing Address Postal Code");
+
+                ProviderName=String.valueOf(firstName[i]+" "+lastName[i]);
+                ProviderAddress=String.valueOf(businessAddress[i]+" "+countryName[i]);
+                ProviderPostalCode=String.valueOf(PostalCode[i]);
+
+
                 map.addMarker(new MarkerOptions()
                         .position(new LatLng(ProviderLatitude, ProviderLongitude))
-                        .title("Data "+i)
-                        .snippet("Lat:"+ProviderLatitude +"Long:"+ProviderLongitude+"Name:"+firstName)
+                        .title(ProviderName)
+                        .snippet(ProviderAddress +","+ProviderPostalCode)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.markerblack)));
 
             }
@@ -162,7 +189,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), firstName[position]+lastName[position], Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), firstName[position]+" " +lastName[position], Toast.LENGTH_SHORT).show();
             }
         });
     }

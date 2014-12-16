@@ -50,4 +50,17 @@ public class SharedPreferenceClass {
     public String[] getLang( ) {
         return lang;
     }
+
+
+    private String[] firstName;
+
+    public void setfirstName(int length) {
+        firstName = new String[length];
+    }
+
+    public String[] getfirstName( ) {
+        return firstName;
+    }
+
+
 }

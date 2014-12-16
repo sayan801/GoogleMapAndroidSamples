@@ -9,4 +9,5 @@ public class DataHolder {
     public String[] businessAddress;
     public String[] lat;
     public String[] lang;
+    public String[] PostalCode;
 }

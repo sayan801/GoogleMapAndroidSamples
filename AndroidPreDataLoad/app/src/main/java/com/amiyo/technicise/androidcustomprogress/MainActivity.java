@@ -27,16 +27,14 @@ public class MainActivity extends Activity {
     private final String TAG = "CustomProgressBarActivity ";
 
     /**
-     * URl to parse the json array object.
-     */
-    protected static String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/" +
-            "getProviderInfoByPartialNameZipDistance/davis/66213/5";
-    protected static String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/" +
-            "geocoding/getLatLongFromAddress/";
+    * URl to parse the json array object.
+    */
+    protected static String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/"+"getProviderInfoByPartialNameZipDistance/davis/66213/1";
+    protected static String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/"+"geocoding/getLatLongFromAddress/";
 
-   App app;
-   // DataTransporter dataTransporter;
-   SharedPreferenceClass sharedPrefClassObj;
+    App app;
+    // DataTransporter dataTransporter;
+    SharedPreferenceClass sharedPrefClassObj;
 
     // flag for Internet connection status
     Boolean isInternetPresent = false;
@@ -155,10 +153,14 @@ public class MainActivity extends Activity {
                 sharedPrefClassObj.setLat(jsonArray.length());
                 sharedPrefClassObj.setLang(jsonArray.length());
 
+
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String[] lat_lang = getLatLong(jsonArray.getJSONObject(i));
+
+
                     sharedPrefClassObj.getLat()[i] = lat_lang[0];
                     sharedPrefClassObj.getLang()[i] = lat_lang[1];
+
                 }
         } catch (JSONException error) {
             Log.e(TAG, error.toString());
@@ -168,6 +170,7 @@ public class MainActivity extends Activity {
 
     private String[] getLatLong(JSONObject jsonObject) {
         HashMap<String, Object> provider = new HashMap<String, Object>();
+
         String[] lat_lang = new String[2];
         try {
             if (jsonObject.has("Provider First Line Business Practice Location Address")) {
