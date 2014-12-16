@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:minHeight="80dp"
         android:maxHeight="120dp"
-        android:src="@drawable/ic_launcher"
+        android:src="@drawable/show_hide_item"
         android:duplicateParentState="true"
         android:layout_gravity="center"
         android:layout_marginLeft="15dp"

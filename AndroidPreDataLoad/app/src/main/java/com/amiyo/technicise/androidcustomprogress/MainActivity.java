@@ -26,20 +26,20 @@ public class MainActivity extends Activity {
 
     private final String TAG = "CustomProgressBarActivity ";
 
-    /**
-    * URl to parse the json array object.
-    */
-    protected static String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/"+"getProviderInfoByPartialNameZipDistance/davis/66213/1";
-    protected static String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/"+"geocoding/getLatLongFromAddress/";
+        /**
+        * URl to parse the json array object.
+        */
+        protected static String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/"+"getProviderInfoByPartialNameZipDistance/davis/66213/1";
+        protected static String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/"+"geocoding/getLatLongFromAddress/";
 
-    App app;
-    // DataTransporter dataTransporter;
-    SharedPreferenceClass sharedPrefClassObj;
+        App app;
+        // DataTransporter dataTransporter;
+        SharedPreferenceClass sharedPrefClassObj;
 
-    // flag for Internet connection status
-    Boolean isInternetPresent = false;
-    // Connection detector class
-    ConnectionDetector cd;
+        // flag for Internet connection status
+        Boolean isInternetPresent = false;
+        // Connection detector class
+        ConnectionDetector cd;
 
     /**
      * Layout Views.

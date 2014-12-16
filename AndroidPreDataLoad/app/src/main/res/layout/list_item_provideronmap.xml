@@ -11,7 +11,6 @@
         android:id="@+id/linearLayoutProviderDetails"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-
         android:orientation="vertical"
         android:layout_marginLeft="35dp"
         android:layout_marginRight="10dp"

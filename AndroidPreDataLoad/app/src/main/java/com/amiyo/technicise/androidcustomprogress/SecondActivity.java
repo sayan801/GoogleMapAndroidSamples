@@ -47,6 +47,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     public String ProviderName,ProviderAddress,ProviderPostalCode,CountListRowNo;
     public TextView CountListItem;
 
+    public int i=0;
+
     /** * @param context * @param dipValue * @return  */
     public static int dip2px(Context context, float dipValue)
     {
@@ -153,7 +155,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             JSONObject jsonObject2;
 
 
-            for (int i = 0; i < jsonArray.length(); i++)
+            for (i = 0; i < jsonArray.length(); i++)
             {
              ProviderLatitude = Double.valueOf(sharedPrefClassObj.getLat()[i]);
              ProviderLongitude = Double.valueOf(sharedPrefClassObj.getLang()[i]);
@@ -195,10 +197,12 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), firstName[position]+" " +lastName[position], Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), firstName[position] + " " + lastName[position], Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
 
 
     @Override
@@ -220,7 +224,13 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
     @Override
     public void onClick(View view) {
+        switch (view.getId()) {
 
+            case R.id.Markar_Icon:
+
+            break;
+
+        }
     }
 
     @Override
