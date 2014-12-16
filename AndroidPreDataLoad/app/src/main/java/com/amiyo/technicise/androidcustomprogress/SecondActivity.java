@@ -42,8 +42,10 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     public String[] lat;
     public String[] lang;
     public ImageView view;
+
     Double ProviderLatitude, ProviderLongitude;
-    String ProviderName,ProviderAddress,ProviderPostalCode;
+    public String ProviderName,ProviderAddress,ProviderPostalCode,CountListRowNo;
+    public TextView CountListItem;
 
     /** * @param context * @param dipValue * @return  */
     public static int dip2px(Context context, float dipValue)
@@ -96,6 +98,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
         visibleMarkers.clear();
         visibleMarkersGreen.clear();
+
+        CountListItem=(TextView)findViewById(R.id.TextNoOfResults);
 
 
         try {
@@ -162,7 +166,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 countryName[i] = jsonObject2.getString("Provider Business Mailing Address Country Code");
                 PostalCode[i] = jsonObject2.getString("Provider Business Mailing Address Postal Code");
 
-                ProviderName=String.valueOf(firstName[i]+" "+lastName[i]);
+                ProviderName=String.valueOf(firstName[i] + " " + lastName[i]);
                 ProviderAddress=String.valueOf(businessAddress[i]+" "+countryName[i]);
                 ProviderPostalCode=String.valueOf(PostalCode[i]);
 
@@ -170,7 +174,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 map.addMarker(new MarkerOptions()
                         .position(new LatLng(ProviderLatitude, ProviderLongitude))
                         .title(ProviderName)
-                        .snippet(ProviderAddress +","+ProviderPostalCode)
+                        .snippet(ProviderAddress + "," + ProviderPostalCode)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.markerblack)));
 
             }
@@ -184,8 +188,10 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(ProviderLatitude - 0.03, ProviderLongitude + 0.001), 12));
 
-
         listView.setAdapter(new MyAdapter(this, dataHolder));
+        CountListRowNo= String.valueOf(+listView.getAdapter().getCount());
+
+        CountListItem.setText(CountListRowNo+"/"+CountListRowNo+" RESULTS");
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
