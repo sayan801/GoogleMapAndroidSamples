@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -68,6 +69,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     GoogleMap map;
     HashMap<Integer, Marker> visibleMarkersGreen = new HashMap<Integer, Marker>();
     HashMap<Integer, Marker> visibleMarkers = new HashMap<Integer, Marker>();
+    Button btnLoadMore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -108,7 +110,22 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
         CountListItem=(TextView)findViewById(R.id.TextNoOfResults);
 
+        // LoadMore button
+        btnLoadMore = new Button(this);
+        btnLoadMore.setBackgroundColor(Color.parseColor("#54D66A"));
+        btnLoadMore.setTextColor(Color.parseColor("#FFFFFF"));
+        btnLoadMore.setText("Load more data");
+        /** * Listening to Load More button click event* */
+        btnLoadMore.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View arg0)
+            {
+                Toast.makeText(getApplicationContext()," click row > ", Toast.LENGTH_SHORT).show();
 
+            }
+        });
+        listView.addFooterView(btnLoadMore);
         try
         {
             JSONObject jsonObject = new JSONObject(jsonData);
@@ -223,23 +240,21 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
         CountListItem.setText(" "+CountListRowNo+"/"+CountListRowNo+" RESULTS");
 
-       listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-       {
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View view, final int position, long id)
-            {
-                zoomAddress(position);
-                final int rowItem = position;
+       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           @Override
+           public void onItemClick(AdapterView<?> adapter, View view, final int position, long id) {
+               zoomAddress(position);
+               final int rowItem = position;
 
-                LinearLayout ln = (LinearLayout)view.findViewById(R.id.linearLayoutProviderDetails);
-                ln.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(getApplicationContext(), String.valueOf(providerNpiID[rowItem])+" Details row > "+rowItem, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
+               LinearLayout ln = (LinearLayout) view.findViewById(R.id.linearLayoutProviderDetails);
+               ln.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View view) {
+                       Toast.makeText(getApplicationContext(), String.valueOf(providerNpiID[rowItem]) + " Details row > " + rowItem, Toast.LENGTH_SHORT).show();
+                   }
+               });
+           }
+       });
     }
 
 
