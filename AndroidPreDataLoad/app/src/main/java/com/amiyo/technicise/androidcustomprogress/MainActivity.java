@@ -27,8 +27,8 @@ public class MainActivity extends Activity
     private final String TAG = "CustomProgressBarActivity";
 
     /** * URl to parse the json array object  */
-   String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/"+"getProviderInfoByPartialNameZipDistance/davis/66213/1";
-   String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/"+"geocoding/getLatLongFromAddress/";
+   final String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/davis/66213/1";
+   final String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
 
     App app;
     // DataTransporter dataTransporter;
@@ -141,22 +141,21 @@ public class MainActivity extends Activity
     {
         try
         {
+        sharedPrefClassObj.setJSONData(jsonResponse);
+        JSONObject jsonObject = new JSONObject(jsonData);
+        JSONArray jsonArray = jsonObject.getJSONArray("npidata");
 
-            sharedPrefClassObj.setJSONData(jsonResponse);
-            JSONObject jsonObject = new JSONObject(jsonData);
-            JSONArray jsonArray = jsonObject.getJSONArray("npidata");
+        sharedPrefClassObj.setLat(jsonArray.length());
+        sharedPrefClassObj.setLang(jsonArray.length());
+            Log.d("total result > ",jsonArray.length()+" ");
+            for (int i = 0; i < jsonArray.length(); i++)
+            {
+                String[] lat_lang = getLatLong(jsonArray.getJSONObject(i));
 
-            sharedPrefClassObj.setLat(jsonArray.length());
-            sharedPrefClassObj.setLang(jsonArray.length());
+                sharedPrefClassObj.getLat()[i] = lat_lang[0];
+                sharedPrefClassObj.getLang()[i] = lat_lang[1];
 
-                for (int i = 0; i < jsonArray.length(); i++)
-                {
-                    String[] lat_lang = getLatLong(jsonArray.getJSONObject(i));
-
-                    sharedPrefClassObj.getLat()[i] = lat_lang[0];
-                    sharedPrefClassObj.getLang()[i] = lat_lang[1];
-
-                }
+            }
         } catch (JSONException error)
         {
             Log.e(TAG, error.toString());

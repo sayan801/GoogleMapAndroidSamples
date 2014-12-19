@@ -228,7 +228,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, final int position, long id)
             {
-                // Toast.makeText(getApplicationContext(), firstName[position] + " " + lastName[position], Toast.LENGTH_SHORT).show();
                 zoomAddress(position);
                 final int rowItem = position;
 
@@ -278,6 +277,32 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     public void onInfoWindowClick(Marker marker)
     {
 
+        try
+        {
+            marker.showInfoWindow();
+            String m = marker.getId();
+            m = m.replace("m","");
+            final int i =  Integer.valueOf(m);
+            alfaValue = i ; //assign value
+
+            for(int k = 0; k<markerDetailsBlack.size(); k++)
+            {
+                if(alfaValue == markerDetailsBlack.get(k))
+                {
+                    alfaValue = k;
+                    break;
+                }
+
+                if(alfaValue == markerDetailsGreen.get(k))
+                {
+                    alfaValue = k;
+                    break;
+                }
+            }
+            Toast.makeText(getApplicationContext(), "NpiID > "+String.valueOf(providerNpiID[alfaValue]), Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception excepMarker)  {  }
+
     }
 
     @Override
@@ -305,7 +330,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                     break;
                 }
             }
-            listItemPotion = alfaValue;
+            // listItemPotion = alfaValue;
             //auto-Scroll the ListView position
             listView.smoothScrollToPositionFromTop(alfaValue,alfaValue);
             //programatically click on ListView row Item for corresponding marker Click
