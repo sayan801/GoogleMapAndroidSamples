@@ -10,4 +10,5 @@ public class DataHolder {
     public String[] lat;
     public String[] lang;
     public String[] PostalCode;
+    public String[] providerNpiId;
 }

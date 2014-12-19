@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
     public String jsonResponse,jsonData,callAddress,provideraddress;
 
     public String ProviderFirstLineBusinessMailingAddress,ProviderBusinessMailingAddressCityName,ProviderBusinessMailingAddressStateName,
-                  ProviderBusinessMailingAddressPostalCode,ProviderSecondLineBusinessMailingAddress;
+                  ProviderBusinessMailingAddressPostalCode,ProviderSecondLineBusinessMailingAddress, npiID;
 
     public JSONArray jsonLatLongArray;
     public JSONObject jsonObjectLatLng;
@@ -172,7 +172,8 @@ public class MainActivity extends Activity {
         HashMap<String, Object> provider = new HashMap<String, Object>();
 
         String[] lat_lang = new String[2];
-        try {
+        try
+        {
             if (jsonObject.has("Provider First Line Business Practice Location Address")) {
                 ProviderFirstLineBusinessMailingAddress = jsonObject.getString("Provider First Line Business Practice Location Address");
             } else {

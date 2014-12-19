@@ -44,10 +44,12 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     public String[] PostalCode;
     public String[] lat;
     public String[] lang;
+    public String[] providerNpiID;
+
     public ImageView view;
 
     Double providerLatitude, providerLongitude;
-    public String providerName,providerAddress,ProviderPostalCode,CountListRowNo;
+    public String providerName,providerAddress,ProviderPostalCode,CountListRowNo, npiId;
     public TextView CountListItem;
     public int alfaValue=0, listItemPotion = 0;
     Map<Integer, Integer> markerDetailsBlack = new HashMap<Integer, Integer>();
@@ -118,6 +120,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             countryName = new String[jsonArray.length()];
             businessAddress = new String[jsonArray.length()];
             PostalCode = new String[jsonArray.length()];
+            providerNpiID = new String[jsonArray.length()];
 
             JSONObject jsonObject1;
             for( int i = 0; i < jsonArray.length(); i++ )
@@ -129,6 +132,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 countryName[i] = jsonObject1.getString("Provider Business Mailing Address Country Code");
                 businessAddress[i] = jsonObject1.getString("Provider First Line Business Practice Location Address");
                 PostalCode[i] = jsonObject1.getString("Provider Business Mailing Address Postal Code");
+                providerNpiID[i] = jsonObject1.getString("NPI");
 
             }
         } catch (Exception error)
@@ -146,7 +150,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             dataHolder.countryName      = countryName;
             dataHolder.lat              = lat;
             dataHolder.lang             = lang;
-            dataHolder.PostalCode       =PostalCode;
+            dataHolder.PostalCode       = PostalCode;
+            dataHolder.providerNpiId    = providerNpiID;
 
         try
         {
@@ -171,13 +176,17 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 countryName[i] = jsonObject2.getString("Provider Business Mailing Address Country Code");
                 PostalCode[i] = jsonObject2.getString("Provider Business Mailing Address Postal Code");
 
+                providerNpiID[i] = jsonObject2.getString("NPI");
+
+
                 providerName=String.valueOf(firstName[i] + " " + lastName[i]);
                 providerAddress=String.valueOf(businessAddress[i]+" "+countryName[i]);
                 ProviderPostalCode=String.valueOf(PostalCode[i]);
+                npiId = String.valueOf(providerNpiID[i]);;
 
                 Marker markerBlack = map.addMarker(new MarkerOptions()
                         .position(new LatLng(providerLatitude, providerLongitude))
-                        .title(" "+providerName)
+                        .title(providerName+" "+npiId)
                         .snippet(" " + providerAddress)
                         .icon(IconMarkerplot));
                 visibleMarkers.put(i, markerBlack);
@@ -188,7 +197,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
                 Marker markerGreen = map.addMarker(new MarkerOptions()
                         .position(new LatLng(providerLatitude, providerLongitude))
-                        .title(providerName)
+                        .title(providerName+" "+npiId)
                         .snippet(" " + providerAddress)
                         .icon(IconMarkerplotgreen));
                 String mGreen = markerGreen.getId();
@@ -212,7 +221,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         listView.setAdapter(new MyAdapter(this, dataHolder));
         CountListRowNo= String.valueOf(+listView.getAdapter().getCount());
 
-        CountListItem.setText(CountListRowNo+"/"+CountListRowNo+" RESULTS");
+        CountListItem.setText(" "+CountListRowNo+"/"+CountListRowNo+" RESULTS");
 
        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
        {
@@ -227,7 +236,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 ln.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(getApplicationContext(), "Details row > "+rowItem, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), String.valueOf(providerNpiID[rowItem])+" Details row > "+rowItem, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
