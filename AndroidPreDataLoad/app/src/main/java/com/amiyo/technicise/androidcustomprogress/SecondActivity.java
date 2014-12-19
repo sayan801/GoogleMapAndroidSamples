@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -24,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class SecondActivity extends FragmentActivity implements View.OnClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
@@ -43,10 +45,12 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     public String[] lang;
     public ImageView view;
 
-    Double ProviderLatitude, ProviderLongitude;
-    public String ProviderName,ProviderAddress,ProviderPostalCode,CountListRowNo;
+    Double providerLatitude, providerLongitude;
+    public String providerName,providerAddress,ProviderPostalCode,CountListRowNo;
     public TextView CountListItem;
     public int i=0;
+    Map<Integer, Integer> markerDetailsBlack = new HashMap<Integer, Integer>();
+    Map<Integer, Integer> markerDetailsGreen = new HashMap<Integer, Integer>();
 
     /** * @param context * @param dipValue * @return  */
     public static int dip2px(Context context, float dipValue)
@@ -144,13 +148,15 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             JSONObject jsonObject = new JSONObject(jsonData);
             JSONArray jsonArray = jsonObject.getJSONArray("npidata");
             map.clear();
+            BitmapDescriptor IconMarkerplot = BitmapDescriptorFactory.fromResource(R.drawable.markerblack);
+            BitmapDescriptor IconMarkerplotgreen = BitmapDescriptorFactory.fromResource(R.drawable.markerplotgreen);
 
             JSONObject jsonObject2;
 
-            for (i = 0; i < jsonArray.length(); i++)
+            for (int i = 0; i < jsonArray.length(); i++)
             {
-             ProviderLatitude = Double.valueOf(sharedPrefClassObj.getLat()[i]);
-             ProviderLongitude = Double.valueOf(sharedPrefClassObj.getLang()[i]);
+                providerLatitude = Double.valueOf(sharedPrefClassObj.getLat()[i]);
+                providerLongitude = Double.valueOf(sharedPrefClassObj.getLang()[i]);
 
                 jsonObject2 = jsonArray.getJSONObject(i);
 
@@ -160,15 +166,40 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 countryName[i] = jsonObject2.getString("Provider Business Mailing Address Country Code");
                 PostalCode[i] = jsonObject2.getString("Provider Business Mailing Address Postal Code");
 
-                ProviderName=String.valueOf(firstName[i] + " " + lastName[i]);
-                ProviderAddress=String.valueOf(businessAddress[i]+" "+countryName[i]);
+                providerName=String.valueOf(firstName[i] + " " + lastName[i]);
+                providerAddress=String.valueOf(businessAddress[i]+" "+countryName[i]);
                 ProviderPostalCode=String.valueOf(PostalCode[i]);
-
+/*
                 map.addMarker(new MarkerOptions()
                         .position(new LatLng(ProviderLatitude, ProviderLongitude))
                         .title(ProviderName)
                         .snippet(ProviderAddress + "," + ProviderPostalCode)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.markerblack)));
+                */
+                Marker markerBlack = map.addMarker(new MarkerOptions()
+                        .position(new LatLng(providerLatitude, providerLongitude))
+                        .title(" "+providerName)
+                        .snippet(" " + providerAddress)
+                        .icon(IconMarkerplot));
+                visibleMarkers.put(i, markerBlack);
+                String mBlack = markerBlack.getId();
+                mBlack = mBlack.replace("m","");
+                final int blackMarker =  Integer.valueOf(mBlack);
+                markerDetailsBlack.put(i, blackMarker);
+                //markerPositionBlack++;
+
+                Marker markerGreen = map.addMarker(new MarkerOptions()
+                        .position(new LatLng(providerLatitude, providerLongitude))
+                        .title(providerName)
+                        .snippet(" " + providerAddress)
+                        .icon(IconMarkerplotgreen));
+                String mGreen = markerGreen.getId();
+                mGreen = mGreen.replace("m","");
+                final int greenMarker =  Integer.valueOf(mGreen);
+                markerDetailsGreen.put(i, greenMarker);
+                //markerPositionGreen++;
+                visibleMarkersGreen.put(i, markerGreen);
+                visibleMarkersGreen.get(i).setVisible(false);
 
             }
         }
@@ -179,7 +210,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         }
 
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(ProviderLatitude - 0.03, ProviderLongitude + 0.001), 12));
+                new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 12));
 
         listView.setAdapter(new MyAdapter(this, dataHolder));
         CountListRowNo= String.valueOf(+listView.getAdapter().getCount());
