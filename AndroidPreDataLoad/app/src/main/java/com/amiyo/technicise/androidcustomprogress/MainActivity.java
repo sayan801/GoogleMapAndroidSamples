@@ -22,28 +22,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity
+{
+    private final String TAG = "CustomProgressBarActivity";
 
-    private final String TAG = "CustomProgressBarActivity ";
+    /** * URl to parse the json array object  */
+   String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/"+"getProviderInfoByPartialNameZipDistance/davis/66213/1";
+   String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/"+"geocoding/getLatLongFromAddress/";
 
-        /**
-        * URl to parse the json array object.
-        */
-        protected static String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/"+"getProviderInfoByPartialNameZipDistance/davis/66213/1";
-        protected static String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/"+"geocoding/getLatLongFromAddress/";
+    App app;
+    // DataTransporter dataTransporter;
+    SharedPreferenceClass sharedPrefClassObj;
 
-        App app;
-        // DataTransporter dataTransporter;
-        SharedPreferenceClass sharedPrefClassObj;
+    // flag for Internet connection status
+    Boolean isInternetPresent = false;
+    // Connection detector class
+    ConnectionDetector cd;
 
-        // flag for Internet connection status
-        Boolean isInternetPresent = false;
-        // Connection detector class
-        ConnectionDetector cd;
-
-    /**
-     * Layout Views.
-     */
+    /**  * Layout Views. */
 
     public Button BtnLoad;
     public ProgressBar MyProgressBar;
@@ -61,7 +57,8 @@ public class MainActivity extends Activity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -89,37 +86,33 @@ public class MainActivity extends Activity {
 
     }
 
-    public void LoadingData(View i) {
-
+    public void LoadingData(View i)
+    {
         // get Internet status
         isInternetPresent = cd.isConnectingToInternet();
-
         // check for Internet status
-        if (isInternetPresent) {
-            // Internet Connection is Present
-            // make HTTP requests
+        if (isInternetPresent)
             new PareJSON().execute();
-
-        } else {
-            // Internet connection is not present
-            // Ask user to connect to Internet
+        else
             Toast.makeText(getApplicationContext(), "Connection Unavailable",Toast.LENGTH_SHORT).show();
-        }
     }
 
 
     /**
      * Private Class for Parsing the JSON over the Internet.
      */
-    private class PareJSON extends AsyncTask<Void, Void, Void> {
+    private class PareJSON extends AsyncTask<Void, Void, Void>
+    {
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute()
+        {
             super.onPreExecute();
             MyProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(Void... params)
+        {
             // Creating instance of service handler class.
             ServiceHandler serviceHandler = new ServiceHandler();
 
@@ -130,7 +123,8 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Void result)
+        {
             MyProgressBar.setVisibility(View.GONE);
 
             app.setDataLoadOnListView(sharedPrefClassObj);
@@ -143,32 +137,35 @@ public class MainActivity extends Activity {
     }
 
 
-    public void parseLatLang(String jsonData) {
-        try {
+    public void parseLatLang(String jsonData)
+    {
+        try
+        {
 
             sharedPrefClassObj.setJSONData(jsonResponse);
             JSONObject jsonObject = new JSONObject(jsonData);
             JSONArray jsonArray = jsonObject.getJSONArray("npidata");
 
-                sharedPrefClassObj.setLat(jsonArray.length());
-                sharedPrefClassObj.setLang(jsonArray.length());
+            sharedPrefClassObj.setLat(jsonArray.length());
+            sharedPrefClassObj.setLang(jsonArray.length());
 
-
-                for (int i = 0; i < jsonArray.length(); i++) {
+                for (int i = 0; i < jsonArray.length(); i++)
+                {
                     String[] lat_lang = getLatLong(jsonArray.getJSONObject(i));
-
 
                     sharedPrefClassObj.getLat()[i] = lat_lang[0];
                     sharedPrefClassObj.getLang()[i] = lat_lang[1];
 
                 }
-        } catch (JSONException error) {
+        } catch (JSONException error)
+        {
             Log.e(TAG, error.toString());
             error.printStackTrace();
         }
     }
 
-    private String[] getLatLong(JSONObject jsonObject) {
+    private String[] getLatLong(JSONObject jsonObject)
+    {
         HashMap<String, Object> provider = new HashMap<String, Object>();
 
         String[] lat_lang = new String[2];
@@ -241,7 +238,8 @@ public class MainActivity extends Activity {
                 lat_lang[1] = ProviderLongitude;
                 arrayListLatLong.add(provider);
             }
-        } catch (Exception error) {
+        } catch (Exception error)
+        {
             Log.e(TAG, error.toString());
         }
 
@@ -249,21 +247,24 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings)
+        {
             return true;
         }
 
