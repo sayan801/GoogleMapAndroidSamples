@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,7 +68,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     HashMap<Integer, Marker> visibleMarkers = new HashMap<Integer, Marker>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
@@ -105,7 +107,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         CountListItem=(TextView)findViewById(R.id.TextNoOfResults);
 
 
-        try {
+        try
+        {
             JSONObject jsonObject = new JSONObject(jsonData);
 
             JSONArray jsonArray = jsonObject.getJSONArray("npidata");
@@ -117,7 +120,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             PostalCode = new String[jsonArray.length()];
 
             JSONObject jsonObject1;
-            for( int i = 0; i < jsonArray.length(); i++ ) {
+            for( int i = 0; i < jsonArray.length(); i++ )
+            {
                 jsonObject1 = jsonArray.getJSONObject(i);
 
                 firstName[i] = jsonObject1.getString("Provider First Name");
@@ -127,7 +131,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 PostalCode[i] = jsonObject1.getString("Provider Business Mailing Address Postal Code");
 
             }
-        } catch (Exception error) {
+        } catch (Exception error)
+        {
             Log.e(TAG, error.toString());
             error.printStackTrace();
         }
@@ -169,13 +174,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 providerName=String.valueOf(firstName[i] + " " + lastName[i]);
                 providerAddress=String.valueOf(businessAddress[i]+" "+countryName[i]);
                 ProviderPostalCode=String.valueOf(PostalCode[i]);
-/*
-                map.addMarker(new MarkerOptions()
-                        .position(new LatLng(ProviderLatitude, ProviderLongitude))
-                        .title(ProviderName)
-                        .snippet(ProviderAddress + "," + ProviderPostalCode)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.markerblack)));
-                */
+
                 Marker markerBlack = map.addMarker(new MarkerOptions()
                         .position(new LatLng(providerLatitude, providerLongitude))
                         .title(" "+providerName)
@@ -186,7 +185,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 mBlack = mBlack.replace("m","");
                 final int blackMarker =  Integer.valueOf(mBlack);
                 markerDetailsBlack.put(i, blackMarker);
-                //markerPositionBlack++;
 
                 Marker markerGreen = map.addMarker(new MarkerOptions()
                         .position(new LatLng(providerLatitude, providerLongitude))
@@ -197,7 +195,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 mGreen = mGreen.replace("m","");
                 final int greenMarker =  Integer.valueOf(mGreen);
                 markerDetailsGreen.put(i, greenMarker);
-                //markerPositionGreen++;
                 visibleMarkersGreen.put(i, markerGreen);
                 visibleMarkersGreen.get(i).setVisible(false);
 
@@ -220,10 +217,19 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
        {
             @Override
-            public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
+            public void onItemClick(AdapterView<?> adapter, View view, final int position, long id)
             {
                 // Toast.makeText(getApplicationContext(), firstName[position] + " " + lastName[position], Toast.LENGTH_SHORT).show();
                 zoomAddress(position);
+                final int rowItem = position;
+
+                LinearLayout ln = (LinearLayout)view.findViewById(R.id.linearLayoutProviderDetails);
+                ln.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getApplicationContext(), "Details row > "+rowItem, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
@@ -247,18 +253,21 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
 
             case R.id.Markar_Icon:
-
+                Toast.makeText(getApplicationContext(), "click marker", Toast.LENGTH_SHORT).show();
             break;
 
         }
     }
 
     @Override
-    public void onInfoWindowClick(Marker marker) {
+    public void onInfoWindowClick(Marker marker)
+    {
 
     }
 
