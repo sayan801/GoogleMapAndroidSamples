@@ -217,10 +217,13 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
         CountListItem.setText(CountListRowNo+"/"+CountListRowNo+" RESULTS");
 
-       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+       listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+       {
             @Override
-            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), firstName[position] + " " + lastName[position], Toast.LENGTH_SHORT).show();
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
+            {
+                // Toast.makeText(getApplicationContext(), firstName[position] + " " + lastName[position], Toast.LENGTH_SHORT).show();
+                zoomAddress(position);
             }
         });
     }
@@ -289,10 +292,37 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             listView.smoothScrollToPositionFromTop(alfaValue,alfaValue);
             //programatically click on ListView row Item for corresponding marker Click
             listView.performItemClick(listView.getAdapter().getView(alfaValue, null, null),alfaValue, listView.getItemIdAtPosition(alfaValue));
-///////////////////             zoomAddress(alfaValue);
+            //zoomAddress(alfaValue);
         }
         catch (Exception excepMarker)  {  }
         // Event was handled by our code do not launch default behaviour.
         return true;
+    }
+    // Plot/View only green marker
+    public  void  zoomAddress(int RowId)
+    {
+        try
+        {
+            // visible All black marker
+            for (int p = 0; p < visibleMarkers.size(); p++)
+                visibleMarkers.get(p).setVisible(true);
+            // invisible All green black marker
+            for (int q = 0; q < visibleMarkersGreen.size(); q++)
+                visibleMarkersGreen.get(q).setVisible(false);
+            // invisible only a particular black marker
+            visibleMarkers.get(RowId).setVisible(false);
+            // visible only a green marker
+            visibleMarkersGreen.get(RowId).setVisible(true);
+            //show marker Chata
+            visibleMarkersGreen.get(RowId).showInfoWindow();
+/*
+            providerLatitude = Double.valueOf(latLongHashMap.get("latitude" + RowId));
+            providerLongitude = Double.valueOf(latLongHashMap.get("longitude" + RowId));
+
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 12));
+*/
+        }
+        catch (Exception ex){ }
     }
 }
