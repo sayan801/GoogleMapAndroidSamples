@@ -48,7 +48,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     Double providerLatitude, providerLongitude;
     public String providerName,providerAddress,ProviderPostalCode,CountListRowNo;
     public TextView CountListItem;
-    public int i=0;
+    public int alfaValue=0, listItemPotion = 0;
     Map<Integer, Integer> markerDetailsBlack = new HashMap<Integer, Integer>();
     Map<Integer, Integer> markerDetailsGreen = new HashMap<Integer, Integer>();
 
@@ -260,7 +260,39 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     }
 
     @Override
-    public boolean onMarkerClick(Marker marker) {
-        return false;
+    public boolean onMarkerClick(Marker marker)
+    {
+        try
+        {
+            marker.showInfoWindow();
+            String m = marker.getId();
+            m = m.replace("m","");
+            final int i =  Integer.valueOf(m);
+            alfaValue = i ; //assign value
+
+            for(int k = 0; k<markerDetailsBlack.size(); k++)
+            {
+                if(alfaValue == markerDetailsBlack.get(k))
+                {
+                    alfaValue = k;
+                    break;
+                }
+
+                if(alfaValue == markerDetailsGreen.get(k))
+                {
+                    alfaValue = k;
+                    break;
+                }
+            }
+            listItemPotion = alfaValue;
+            //auto-Scroll the ListView position
+            listView.smoothScrollToPositionFromTop(alfaValue,alfaValue);
+            //programatically click on ListView row Item for corresponding marker Click
+            listView.performItemClick(listView.getAdapter().getView(alfaValue, null, null),alfaValue, listView.getItemIdAtPosition(alfaValue));
+///////////////////             zoomAddress(alfaValue);
+        }
+        catch (Exception excepMarker)  {  }
+        // Event was handled by our code do not launch default behaviour.
+        return true;
     }
 }
