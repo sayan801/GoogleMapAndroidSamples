@@ -71,7 +71,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     HashMap<Integer, Marker> visibleMarkers = new HashMap<Integer, Marker>();
     Button btnLoadMore;
 
-int totalResultCounted = 0;
+int totalResultCounted = 0, showingResult = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -239,6 +239,7 @@ int totalResultCounted = 0;
         listView.setAdapter(new MyAdapter(this, dataHolder));
         int resutl = listView.getAdapter().getCount();
         resutl = resutl - 1;
+        showingResult =resutl;
         CountListItem.setText(" "+resutl+" / "+totalResultCounted+" RESULTS");
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -385,16 +386,35 @@ int totalResultCounted = 0;
             JSONObject jsonObject = new JSONObject(jsonData);
 
             JSONArray jsonArray = jsonObject.getJSONArray("npidata");
-
+/*
             firstName = new String[jsonArray.length()];
             lastName = new String[jsonArray.length()];
             countryName = new String[jsonArray.length()];
             businessAddress = new String[jsonArray.length()];
             PostalCode = new String[jsonArray.length()];
             providerNpiID = new String[jsonArray.length()];
+*/
+            int incrementValue, incrementWith = 10;
+
+            if((showingResult+incrementWith) > totalResultCounted)
+            {
+                int remainingResult = (showingResult+incrementWith) - totalResultCounted;
+                incrementValue = (showingResult+incrementWith) - remainingResult;
+            }
+            else
+            {
+                incrementValue = (showingResult+incrementWith);
+            }
+
+            firstName = new String[incrementValue];
+            lastName = new String[incrementValue];
+            countryName = new String[incrementValue];
+            businessAddress = new String[incrementValue];
+            PostalCode = new String[incrementValue];
+            providerNpiID = new String[incrementValue];
 
             JSONObject jsonObject1;
-            for( int i = 0; i < jsonArray.length(); i++ )
+            for( int i = 0; i < incrementValue; i++ )
             {
                 jsonObject1 = jsonArray.getJSONObject(i);
 
@@ -427,6 +447,7 @@ int totalResultCounted = 0;
         listView.setAdapter(new MyAdapter(this, dataHolder));
         int resutl = listView.getAdapter().getCount();
         resutl = resutl - 1;
+        showingResult = resutl;
         CountListItem.setText(" "+resutl+" / "+totalResultCounted+" RESULTS");
     }
 }
