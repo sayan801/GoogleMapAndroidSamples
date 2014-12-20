@@ -106,41 +106,40 @@
                 android:textColor="@android:color/black"
                 />
         </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        >
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:id="@+id/TxtProviderNPIid"
-            android:visibility="invisible"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:id="@+id/TxtProviderAddress"
-            android:visibility="invisible"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:id="@+id/Txt_Phone"
-            android:visibility="invisible"
-            />
-        <TextView
-            android:id="@+id/Txt_Fax"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="invisible"
-            />
-        <TextView
-            android:id="@+id/Txt_Gender"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="invisible"
-            />
+            >
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/TxtProviderNPIid"
+                android:visibility="invisible"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/TxtProviderAddress"
+                android:visibility="invisible"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/Txt_Phone"
+                android:visibility="invisible"
+                />
+            <TextView
+                android:id="@+id/Txt_Fax"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                />
+            <TextView
+                android:id="@+id/Txt_Gender"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                />
+        </LinearLayout>
     </LinearLayout>
 </com.amiyo.technicise.androidcustomprogress.CheckableLinearLayout>

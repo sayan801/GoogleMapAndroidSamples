@@ -11,7 +11,7 @@ import android.widget.TextView;
 /**
  * Adapter is used for showing the json array data to the list.
  */
-public class MyAdapter extends BaseAdapter {
+public class MyAdapter_BKUP extends BaseAdapter {
 
     private String[] firstName;
     private String[] lastName;
@@ -21,7 +21,7 @@ public class MyAdapter extends BaseAdapter {
     private String[] lat;
     private String[] lang;
 
-    public MyAdapter(Context context, DataHolder holder) {
+    public MyAdapter_BKUP(Context context, DataHolder holder) {
 
         this.context = context;
         this.firstName = holder.firstName;
