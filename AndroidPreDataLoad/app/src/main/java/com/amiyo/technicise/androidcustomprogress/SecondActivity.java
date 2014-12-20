@@ -71,7 +71,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     HashMap<Integer, Marker> visibleMarkers = new HashMap<Integer, Marker>();
     Button btnLoadMore;
 
-
+int totalResultCounted = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -139,7 +139,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             businessAddress = new String[5];
             PostalCode = new String[5];
             providerNpiID = new String[5];
-
+            totalResultCounted = jsonArray.length();
             JSONObject jsonObject1;
             for( int i = 0; i < 5; i++ )
             {
@@ -237,8 +237,9 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 12));
 */
         listView.setAdapter(new MyAdapter(this, dataHolder));
-int data = listView.getAdapter().getCount();
-        CountListItem.setText(" "+(data-1)+" RESULTS");
+        int resutl = listView.getAdapter().getCount();
+        resutl = resutl - 1;
+        CountListItem.setText(" "+resutl+" / "+totalResultCounted+" RESULTS");
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -424,7 +425,8 @@ int data = listView.getAdapter().getCount();
         dataHolder.providerNpiId    = providerNpiID;
 
         listView.setAdapter(new MyAdapter(this, dataHolder));
-        int data = listView.getAdapter().getCount();
-        CountListItem.setText(" "+(data-1)+" RESULTS");
+        int resutl = listView.getAdapter().getCount();
+        resutl = resutl - 1;
+        CountListItem.setText(" "+resutl+" / "+totalResultCounted+" RESULTS");
     }
 }

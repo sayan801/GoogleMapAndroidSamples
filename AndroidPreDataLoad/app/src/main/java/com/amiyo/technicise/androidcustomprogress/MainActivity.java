@@ -27,7 +27,7 @@ public class MainActivity extends Activity
     private final String TAG = "CustomProgressBarActivity";
 
     /** * URl to parse the json array object  */
-    final String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/davis/66213/5";
+    final String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/davis/66213/10";
     final String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
 
     App app;
