@@ -27,8 +27,8 @@ public class MainActivity extends Activity
     private final String TAG = "CustomProgressBarActivity";
 
     /** * URl to parse the json array object  */
-   final String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/davis/66213/1";
-   final String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
+    final String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/davis/66213/5";
+    final String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
 
     App app;
     // DataTransporter dataTransporter;
@@ -46,7 +46,7 @@ public class MainActivity extends Activity
     public String jsonResponse,jsonData,callAddress,provideraddress;
 
     public String ProviderFirstLineBusinessMailingAddress,ProviderBusinessMailingAddressCityName,ProviderBusinessMailingAddressStateName,
-                  ProviderBusinessMailingAddressPostalCode,ProviderSecondLineBusinessMailingAddress, npiID;
+            ProviderBusinessMailingAddressPostalCode,ProviderSecondLineBusinessMailingAddress, npiID;
 
     public JSONArray jsonLatLongArray;
     public JSONObject jsonObjectLatLng;
@@ -141,12 +141,12 @@ public class MainActivity extends Activity
     {
         try
         {
-        sharedPrefClassObj.setJSONData(jsonResponse);
-        JSONObject jsonObject = new JSONObject(jsonData);
-        JSONArray jsonArray = jsonObject.getJSONArray("npidata");
+            sharedPrefClassObj.setJSONData(jsonResponse);
+            JSONObject jsonObject = new JSONObject(jsonData);
+            JSONArray jsonArray = jsonObject.getJSONArray("npidata");
 
-        sharedPrefClassObj.setLat(jsonArray.length());
-        sharedPrefClassObj.setLang(jsonArray.length());
+            sharedPrefClassObj.setLat(jsonArray.length());
+            sharedPrefClassObj.setLang(jsonArray.length());
             Log.d("total result > ",jsonArray.length()+" ");
             for (int i = 0; i < jsonArray.length(); i++)
             {
@@ -216,7 +216,7 @@ public class MainActivity extends Activity
 
             if (provideraddress == null || provideraddress.isEmpty())
                 provideraddress = "addressnotfound"; // will return 'unknown' lat-long and prevented app crash
-
+/*
             /////////////// API CALL //////////////////
 
             callAddress = address + provideraddress;
@@ -229,14 +229,14 @@ public class MainActivity extends Activity
             if (jsonObjectLatLng.getString("status").equals("OK")) {
                 ProviderLatitude = String.valueOf(jsonObjectLatLng.getDouble("latitude"));
                 ProviderLongitude = String.valueOf(jsonObjectLatLng.getDouble("longitude"));
-
-                provider.put("ProviderLatitude", ProviderLatitude);
-                provider.put("ProviderLongitude", ProviderLongitude);
+*/
+                provider.put("ProviderLatitude", "12.22222");
+                provider.put("ProviderLongitude", "14.4444");
 
                 lat_lang[0] = ProviderLatitude;
                 lat_lang[1] = ProviderLongitude;
                 arrayListLatLong.add(provider);
-            }
+            //}
         } catch (Exception error)
         {
             Log.e(TAG, error.toString());

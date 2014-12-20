@@ -71,6 +71,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     HashMap<Integer, Marker> visibleMarkers = new HashMap<Integer, Marker>();
     Button btnLoadMore;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -121,8 +122,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             @Override
             public void onClick(View arg0)
             {
-                Toast.makeText(getApplicationContext()," click row > ", Toast.LENGTH_SHORT).show();
-
+                // Toast.makeText(getApplicationContext()," click load more ", Toast.LENGTH_SHORT).show();
+                loadMoreData();
             }
         });
         listView.addFooterView(btnLoadMore);
@@ -132,15 +133,15 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
             JSONArray jsonArray = jsonObject.getJSONArray("npidata");
 
-            firstName = new String[jsonArray.length()];
-            lastName = new String[jsonArray.length()];
-            countryName = new String[jsonArray.length()];
-            businessAddress = new String[jsonArray.length()];
-            PostalCode = new String[jsonArray.length()];
-            providerNpiID = new String[jsonArray.length()];
+            firstName = new String[5];
+            lastName = new String[5];
+            countryName = new String[5];
+            businessAddress = new String[5];
+            PostalCode = new String[5];
+            providerNpiID = new String[5];
 
             JSONObject jsonObject1;
-            for( int i = 0; i < jsonArray.length(); i++ )
+            for( int i = 0; i < 5; i++ )
             {
                 jsonObject1 = jsonArray.getJSONObject(i);
 
@@ -161,15 +162,15 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         //data holder.
         DataHolder dataHolder = new DataHolder();
 
-            dataHolder.firstName        = firstName;
-            dataHolder.lastName         = lastName;
-            dataHolder.businessAddress  = businessAddress;
-            dataHolder.countryName      = countryName;
-            dataHolder.lat              = lat;
-            dataHolder.lang             = lang;
-            dataHolder.PostalCode       = PostalCode;
-            dataHolder.providerNpiId    = providerNpiID;
-
+        dataHolder.firstName        = firstName;
+        dataHolder.lastName         = lastName;
+        dataHolder.businessAddress  = businessAddress;
+        dataHolder.countryName      = countryName;
+        dataHolder.lat              = lat;
+        dataHolder.lang             = lang;
+        dataHolder.PostalCode       = PostalCode;
+        dataHolder.providerNpiId    = providerNpiID;
+/*
         try
         {
             JSONObject jsonObject = new JSONObject(jsonData);
@@ -234,27 +235,26 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 12));
-
+*/
         listView.setAdapter(new MyAdapter(this, dataHolder));
-        CountListRowNo= String.valueOf(+listView.getAdapter().getCount());
+int data = listView.getAdapter().getCount();
+        CountListItem.setText(" "+(data-1)+" RESULTS");
 
-        CountListItem.setText(" "+CountListRowNo+"/"+CountListRowNo+" RESULTS");
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view, final int position, long id) {
+                zoomAddress(position);
+                final int rowItem = position;
 
-       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-           @Override
-           public void onItemClick(AdapterView<?> adapter, View view, final int position, long id) {
-               zoomAddress(position);
-               final int rowItem = position;
-
-               LinearLayout ln = (LinearLayout) view.findViewById(R.id.linearLayoutProviderDetails);
-               ln.setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View view) {
-                       Toast.makeText(getApplicationContext(), String.valueOf(providerNpiID[rowItem]) + " Details row > " + rowItem, Toast.LENGTH_SHORT).show();
-                   }
-               });
-           }
-       });
+                LinearLayout ln = (LinearLayout) view.findViewById(R.id.linearLayoutProviderDetails);
+                ln.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getApplicationContext(), String.valueOf(providerNpiID[rowItem]) + " Details row > " + rowItem, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
 
@@ -268,7 +268,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 finish();
                 return true;
 
-                default:
+            default:
 
                 return super.onOptionsItemSelected(item);
         }
@@ -283,7 +283,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
             case R.id.Markar_Icon:
                 Toast.makeText(getApplicationContext(), "click marker", Toast.LENGTH_SHORT).show();
-            break;
+                break;
 
         }
     }
@@ -373,14 +373,58 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             visibleMarkersGreen.get(RowId).setVisible(true);
             //show marker Chata
             visibleMarkersGreen.get(RowId).showInfoWindow();
-/*
-            providerLatitude = Double.valueOf(latLongHashMap.get("latitude" + RowId));
-            providerLongitude = Double.valueOf(latLongHashMap.get("longitude" + RowId));
-
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 12));
-*/
         }
         catch (Exception ex){ }
+    }
+
+    public void loadMoreData()
+    {
+        try
+        {
+            JSONObject jsonObject = new JSONObject(jsonData);
+
+            JSONArray jsonArray = jsonObject.getJSONArray("npidata");
+
+            firstName = new String[jsonArray.length()];
+            lastName = new String[jsonArray.length()];
+            countryName = new String[jsonArray.length()];
+            businessAddress = new String[jsonArray.length()];
+            PostalCode = new String[jsonArray.length()];
+            providerNpiID = new String[jsonArray.length()];
+
+            JSONObject jsonObject1;
+            for( int i = 0; i < jsonArray.length(); i++ )
+            {
+                jsonObject1 = jsonArray.getJSONObject(i);
+
+                firstName[i] = jsonObject1.getString("Provider First Name");
+                lastName[i] = jsonObject1.getString("Provider Last Name");
+                countryName[i] = jsonObject1.getString("Provider Business Mailing Address Country Code");
+                businessAddress[i] = jsonObject1.getString("Provider First Line Business Practice Location Address");
+                PostalCode[i] = jsonObject1.getString("Provider Business Mailing Address Postal Code");
+                providerNpiID[i] = jsonObject1.getString("NPI");
+
+            }
+        } catch (Exception error)
+        {
+            Log.e(TAG, error.toString());
+            error.printStackTrace();
+        }
+
+        //data holder.
+        DataHolder dataHolder = new DataHolder();
+
+        dataHolder.firstName        = firstName;
+        dataHolder.lastName         = lastName;
+        dataHolder.businessAddress  = businessAddress;
+        dataHolder.countryName      = countryName;
+        dataHolder.lat              = lat;
+        dataHolder.lang             = lang;
+        dataHolder.PostalCode       = PostalCode;
+        dataHolder.providerNpiId    = providerNpiID;
+
+        listView.setAdapter(new MyAdapter(this, dataHolder));
+        int data = listView.getAdapter().getCount();
+        CountListItem.setText(" "+(data-1)+" RESULTS");
     }
 }
