@@ -148,7 +148,16 @@ public class MainActivity extends Activity
             sharedPrefClassObj.setLat(jsonArray.length());
             sharedPrefClassObj.setLang(jsonArray.length());
             Log.d("total result > ",jsonArray.length()+" ");
-            for (int i = 0; i < jsonArray.length(); i++)
+            int firstMarkerPlot = 10;
+            if(jsonArray.length() < 10)
+            {
+                firstMarkerPlot = jsonArray.length();
+            }
+            else
+            {
+                firstMarkerPlot = 10;
+            }
+            for (int i = 0; i < firstMarkerPlot; i++)
             {
                 String[] lat_lang = getLatLong(jsonArray.getJSONObject(i));
 
@@ -216,7 +225,7 @@ public class MainActivity extends Activity
 
             if (provideraddress == null || provideraddress.isEmpty())
                 provideraddress = "addressnotfound"; // will return 'unknown' lat-long and prevented app crash
-/*
+
             /////////////// API CALL //////////////////
             callAddress = address + provideraddress;
             jsonData = serviceHandler.makeServiceCall(callAddress, ServiceHandler.GET);
@@ -226,14 +235,14 @@ public class MainActivity extends Activity
             if (jsonObjectLatLng.getString("status").equals("OK")) {
                 ProviderLatitude = String.valueOf(jsonObjectLatLng.getDouble("latitude"));
                 ProviderLongitude = String.valueOf(jsonObjectLatLng.getDouble("longitude"));
-*/
-            provider.put("ProviderLatitude", "12.22222");
-            provider.put("ProviderLongitude", "14.4444");
+
+            provider.put("ProviderLatitude", ProviderLatitude);
+            provider.put("ProviderLongitude", ProviderLongitude);
 
             lat_lang[0] = ProviderLatitude;
             lat_lang[1] = ProviderLongitude;
             arrayListLatLong.add(provider);
-            //}
+            }
         } catch (Exception error)
         {
             Log.e(TAG, error.toString());

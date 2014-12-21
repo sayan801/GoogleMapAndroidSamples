@@ -174,7 +174,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         dataHolder.lang             = lang;
         dataHolder.PostalCode       = PostalCode;
         dataHolder.providerNpiId    = providerNpiID;
-/*
+
         try
         {
             JSONObject jsonObject = new JSONObject(jsonData);
@@ -183,7 +183,16 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             BitmapDescriptor IconMarkerplot = BitmapDescriptorFactory.fromResource(R.drawable.markerblack);
             BitmapDescriptor IconMarkerplotgreen = BitmapDescriptorFactory.fromResource(R.drawable.markerplotgreen);
             JSONObject jsonObject2;
-            for (int i = 0; i < jsonArray.length(); i++)
+            int firstMarkerPlot = 10;
+            if(jsonArray.length() < 10)
+            {
+                firstMarkerPlot = jsonArray.length();
+            }
+            else
+            {
+                firstMarkerPlot = 10;
+            }
+            for (int i = 0; i < firstMarkerPlot; i++)
             {
                 providerLatitude = Double.valueOf(sharedPrefClassObj.getLat()[i]);
                 providerLongitude = Double.valueOf(sharedPrefClassObj.getLang()[i]);
@@ -228,7 +237,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         }
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 12));
-*/
+
         listView.setAdapter(new MyAdapter(this, dataHolder));
         int resutl = listView.getAdapter().getCount();
         resutl = resutl - 1;
@@ -255,7 +264,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-
         switch (item.getItemId())
         {
             case android.R.id.home:
@@ -263,10 +271,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 return true;
 
             default:
-
                 return super.onOptionsItemSelected(item);
         }
-
     }
 
     @Override
@@ -275,16 +281,44 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         switch (view.getId())
         {
             case R.id.linearLayoutProviderDetails:
-                String rowNo = String.valueOf(view.getTag());
-                Toast.makeText(getApplicationContext(), "Details click row "+rowNo, Toast.LENGTH_SHORT).show();
+                int rowNo = Integer.parseInt(String.valueOf(view.getTag()));
+                Toast.makeText(getApplicationContext(), "goto next screen"+rowNo, Toast.LENGTH_SHORT).show();
+
                 break;
+
+            case R.id.Markar_Icon:
+                int rowNo1 = Integer.parseInt(String.valueOf(view.getTag()));
+
+                try
+                {
+                    //String rowNo = String.valueOf(view.getTag());
+                    //listItemPotion = Integer.parseInt(rowNo);
+                    zoomAddress(rowNo1);
+                    listView.performItemClick(listView.getAdapter().getView(rowNo1, null, null), rowNo1, listView.getItemIdAtPosition(rowNo1));
+                }
+                catch (Exception exMarkerClick){ }
+                break;
+
+            case R.id.customCheckableLinearLayout:
+                int rowNo2 = Integer.parseInt(String.valueOf(view.getTag()));
+                //Toast.makeText(getApplicationContext(), "Details click row "+rowNo2, Toast.LENGTH_SHORT).show();
+                zoomAddress(rowNo2);
+                try
+                {
+                    //String rowNo = String.valueOf(view.getTag());
+                    //listItemPotion = Integer.parseInt(rowNo);
+                    zoomAddress(listItemPotion);
+                    listView.performItemClick(listView.getAdapter().getView(rowNo2, null, null), rowNo2, listView.getItemIdAtPosition(rowNo2));
+                }
+                catch (Exception exMarkerClick){ }
+                break;
+
         }
     }
 
     @Override
     public void onInfoWindowClick(Marker marker)
     {
-
         try
         {
             marker.showInfoWindow();
@@ -343,7 +377,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             listView.smoothScrollToPositionFromTop(alfaValue,alfaValue);
             //programatically click on ListView row Item for corresponding marker Click
             listView.performItemClick(listView.getAdapter().getView(alfaValue, null, null),alfaValue, listView.getItemIdAtPosition(alfaValue));
-            //zoomAddress(alfaValue);
+            zoomAddress(alfaValue);
         }
         catch (Exception excepMarker)  {  }
         // Event was handled by our code do not launch default behaviour.
@@ -442,8 +476,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         CountListItem.setText(" "+resutl+" / "+totalResultCounted+" RESULTS");
     }
     ///////////////////////////////////
-    public class MyAdapter extends BaseAdapter {
-
+    public class MyAdapter extends BaseAdapter
+    {
         private String[] firstName;
         private String[] lastName;
         private Context context;
@@ -452,8 +486,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         private String[] lat;
         private String[] lang;
 
-        public MyAdapter(Context context, DataHolder holder) {
-
+        public MyAdapter(Context context, DataHolder holder)
+        {
             this.context = context;
             this.firstName = holder.firstName;
             this.lastName = holder.lastName;
@@ -480,13 +514,22 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
         @SuppressLint("InflateParams")
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent)
+        {
             LayoutInflater inflater = LayoutInflater.from(context);
             ViewHolder holder = null;
 
             convertView = inflater.inflate(R.layout.listview_item, null);
             holder = new ViewHolder();
             holder.FirstName = (TextView) convertView.findViewById(R.id.tv_headLn);
+
+            View leftPart =  convertView.findViewById(R.id.Markar_Icon);
+            leftPart.setTag(position);
+            leftPart.setOnClickListener(SecondActivity.this);
+
+            View leftPart2 =  convertView.findViewById(R.id.customCheckableLinearLayout);
+            leftPart2.setTag(position);
+            leftPart2.setOnClickListener(SecondActivity.this);
 
             View rightPart =  convertView.findViewById(R.id.linearLayoutProviderDetails);
             rightPart.setTag(position);
@@ -508,19 +551,15 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             holder.Lang.setText(lang[position]);
             return convertView;
         }
-
-
-
-
     }
     @SuppressWarnings("UnusedDeclaration")
-    public static  class ViewHolder {
+    public static  class ViewHolder
+    {
         TextView FirstName;
         TextView LastName;
         TextView CountryName;
         TextView BusinessAddress;
         TextView Lat;
         TextView Lang;
-
     }
 }
