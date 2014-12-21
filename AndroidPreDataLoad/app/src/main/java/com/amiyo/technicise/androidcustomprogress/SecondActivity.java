@@ -75,7 +75,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     HashMap<Integer, Marker> visibleMarkers = new HashMap<Integer, Marker>();
     Button btnLoadMore;
 
-int totalResultCounted = 0, showingResult = 0;
+    int totalResultCounted = 0, showingResult = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -136,16 +136,16 @@ int totalResultCounted = 0, showingResult = 0;
             JSONObject jsonObject = new JSONObject(jsonData);
 
             JSONArray jsonArray = jsonObject.getJSONArray("npidata");
-
-            firstName = new String[5];
-            lastName = new String[5];
-            countryName = new String[5];
-            businessAddress = new String[5];
-            PostalCode = new String[5];
-            providerNpiID = new String[5];
+            int showFirstValue = 10;
+            firstName = new String[showFirstValue];
+            lastName = new String[showFirstValue];
+            countryName = new String[showFirstValue];
+            businessAddress = new String[showFirstValue];
+            PostalCode = new String[showFirstValue];
+            providerNpiID = new String[showFirstValue];
             totalResultCounted = jsonArray.length();
             JSONObject jsonObject1;
-            for( int i = 0; i < 5; i++ )
+            for( int i = 0; i < showFirstValue; i++ )
             {
                 jsonObject1 = jsonArray.getJSONObject(i);
 
@@ -182,30 +182,22 @@ int totalResultCounted = 0, showingResult = 0;
             map.clear();
             BitmapDescriptor IconMarkerplot = BitmapDescriptorFactory.fromResource(R.drawable.markerblack);
             BitmapDescriptor IconMarkerplotgreen = BitmapDescriptorFactory.fromResource(R.drawable.markerplotgreen);
-
             JSONObject jsonObject2;
-
             for (int i = 0; i < jsonArray.length(); i++)
             {
                 providerLatitude = Double.valueOf(sharedPrefClassObj.getLat()[i]);
                 providerLongitude = Double.valueOf(sharedPrefClassObj.getLang()[i]);
-
                 jsonObject2 = jsonArray.getJSONObject(i);
-
                 firstName[i] = jsonObject2.getString("Provider First Name");
                 lastName[i] = jsonObject2.getString("Provider Last Name");
                 businessAddress[i] = jsonObject2.getString("Provider First Line Business Practice Location Address");
                 countryName[i] = jsonObject2.getString("Provider Business Mailing Address Country Code");
                 PostalCode[i] = jsonObject2.getString("Provider Business Mailing Address Postal Code");
-
                 providerNpiID[i] = jsonObject2.getString("NPI");
-
-
                 providerName=String.valueOf(firstName[i] + " " + lastName[i]);
                 providerAddress=String.valueOf(businessAddress[i]+" "+countryName[i]);
                 ProviderPostalCode=String.valueOf(PostalCode[i]);
                 npiId = String.valueOf(providerNpiID[i]);;
-
                 Marker markerBlack = map.addMarker(new MarkerOptions()
                         .position(new LatLng(providerLatitude, providerLongitude))
                         .title(providerName+" "+npiId)
@@ -216,7 +208,6 @@ int totalResultCounted = 0, showingResult = 0;
                 mBlack = mBlack.replace("m","");
                 final int blackMarker =  Integer.valueOf(mBlack);
                 markerDetailsBlack.put(i, blackMarker);
-
                 Marker markerGreen = map.addMarker(new MarkerOptions()
                         .position(new LatLng(providerLatitude, providerLongitude))
                         .title(providerName+" "+npiId)
@@ -228,7 +219,6 @@ int totalResultCounted = 0, showingResult = 0;
                 markerDetailsGreen.put(i, greenMarker);
                 visibleMarkersGreen.put(i, markerGreen);
                 visibleMarkersGreen.get(i).setVisible(false);
-
             }
         }
         catch (JSONException error)
@@ -236,7 +226,6 @@ int totalResultCounted = 0, showingResult = 0;
             Log.e(TAG, error.toString());
             error.printStackTrace();
         }
-
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 12));
 */
@@ -251,7 +240,6 @@ int totalResultCounted = 0, showingResult = 0;
             public void onItemClick(AdapterView<?> adapter, View view, final int position, long id) {
                 zoomAddress(position);
                 final int rowItem = position;
-
                 LinearLayout ln = (LinearLayout) view.findViewById(R.id.linearLayoutProviderDetails);
                 ln.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -496,21 +484,21 @@ int totalResultCounted = 0, showingResult = 0;
             LayoutInflater inflater = LayoutInflater.from(context);
             ViewHolder holder = null;
 
-                convertView = inflater.inflate(R.layout.listview_item, null);
-                holder = new ViewHolder();
-                holder.FirstName = (TextView) convertView.findViewById(R.id.tv_headLn);
+            convertView = inflater.inflate(R.layout.listview_item, null);
+            holder = new ViewHolder();
+            holder.FirstName = (TextView) convertView.findViewById(R.id.tv_headLn);
 
-                View rightPart =  convertView.findViewById(R.id.linearLayoutProviderDetails);
-                rightPart.setTag(position);
-                rightPart.setOnClickListener(SecondActivity.this);
+            View rightPart =  convertView.findViewById(R.id.linearLayoutProviderDetails);
+            rightPart.setTag(position);
+            rightPart.setOnClickListener(SecondActivity.this);
 
-                holder.LastName = (TextView) convertView.findViewById(R.id.tv_dateLn);
-                holder.CountryName = (TextView) convertView.findViewById(R.id.tv_country);
-                holder.BusinessAddress = (TextView) convertView.findViewById(R.id.tv_business);
-                holder.Lat = (TextView) convertView.findViewById(R.id.Txt_Lat);
-                holder.Lang = (TextView) convertView.findViewById(R.id.Txt_Long);
-                //tag the holder object to the convert view so that the object can recycle every time.
-                convertView.setTag(holder);
+            holder.LastName = (TextView) convertView.findViewById(R.id.tv_dateLn);
+            holder.CountryName = (TextView) convertView.findViewById(R.id.tv_country);
+            holder.BusinessAddress = (TextView) convertView.findViewById(R.id.tv_business);
+            holder.Lat = (TextView) convertView.findViewById(R.id.Txt_Lat);
+            holder.Lang = (TextView) convertView.findViewById(R.id.Txt_Long);
+            //tag the holder object to the convert view so that the object can recycle every time.
+            convertView.setTag(holder);
 
             holder.FirstName.setText(firstName[position]);
             holder.LastName.setText(lastName[position]);

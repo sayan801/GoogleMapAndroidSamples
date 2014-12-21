@@ -27,7 +27,7 @@ public class MainActivity extends Activity
     private final String TAG = "CustomProgressBarActivity";
 
     /** * URl to parse the json array object  */
-    final String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/john/66213/10";
+    final String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/Davis/66213/10";
     final String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
 
     App app;
@@ -218,24 +218,21 @@ public class MainActivity extends Activity
                 provideraddress = "addressnotfound"; // will return 'unknown' lat-long and prevented app crash
 /*
             /////////////// API CALL //////////////////
-
             callAddress = address + provideraddress;
             jsonData = serviceHandler.makeServiceCall(callAddress, ServiceHandler.GET);
             JSONObject JObjectFetchAddress = new JSONObject(jsonData);
             jsonLatLongArray = JObjectFetchAddress.getJSONArray("result");
-
             jsonObjectLatLng = jsonLatLongArray.getJSONObject(0);
-
             if (jsonObjectLatLng.getString("status").equals("OK")) {
                 ProviderLatitude = String.valueOf(jsonObjectLatLng.getDouble("latitude"));
                 ProviderLongitude = String.valueOf(jsonObjectLatLng.getDouble("longitude"));
 */
-                provider.put("ProviderLatitude", "12.22222");
-                provider.put("ProviderLongitude", "14.4444");
+            provider.put("ProviderLatitude", "12.22222");
+            provider.put("ProviderLongitude", "14.4444");
 
-                lat_lang[0] = ProviderLatitude;
-                lat_lang[1] = ProviderLongitude;
-                arrayListLatLong.add(provider);
+            lat_lang[0] = ProviderLatitude;
+            lat_lang[1] = ProviderLongitude;
+            arrayListLatLong.add(provider);
             //}
         } catch (Exception error)
         {
