@@ -49,7 +49,7 @@ public class SlidingDrawer extends FrameLayout {
         super.onFinishInflate();
         drawer = (LinearLayout)findViewById(R.id.drawer_layout);
 
-        content = findViewById(R.id.listView1);
+        content = findViewById(R.id.listViewProviderSearchResults);
         MAX_MOVE_VALUE = com.amiyo.technicise.androidcustomprogress.SecondActivity.dip2px(getContext(), 20);
         DRAG_BAR_VALUE = com.amiyo.technicise.androidcustomprogress.SecondActivity.dip2px(getContext(), 35);
         ANIMATION_BOUND_VALUE = com.amiyo.technicise.androidcustomprogress.SecondActivity.dip2px(getContext(), 15);

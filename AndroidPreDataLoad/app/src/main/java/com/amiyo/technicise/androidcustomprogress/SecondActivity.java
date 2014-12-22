@@ -74,7 +74,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     HashMap<Integer, Marker> visibleMarkersGreen = new HashMap<Integer, Marker>();
     HashMap<Integer, Marker> visibleMarkers = new HashMap<Integer, Marker>();
     Map<String, String> latLongHashMap = new HashMap<String, String>();
-    Button btnLoadMore;
+    Button btnLoadMore, btnShowAllProviders;
 
     int totalResultCounted = 0, showingResult = 0, numberKey = 0, alfaValue = 0;
     @Override
@@ -104,7 +104,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         lat = sharedPrefClassObj.getLat();
         lang = sharedPrefClassObj.getLang();
 
-        listView = (ListView) findViewById(R.id.listView1);
+        listView = (ListView) findViewById(R.id.listViewProviderSearchResults);
 
         map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapProviderSearchResult)).getMap();
         map.setOnMarkerClickListener(this);
@@ -115,6 +115,23 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         visibleMarkersGreen.clear();
 
         CountListItem = (TextView)findViewById(R.id.TextNoOfResults);
+
+        //btnShowAllProviders button
+        btnShowAllProviders = new Button(this);
+        btnShowAllProviders.setBackgroundColor(Color.parseColor("#54D66A"));
+        btnShowAllProviders.setText("Load all Providers");
+        btnShowAllProviders.setTextColor(Color.parseColor("#FFFFFF"));
+
+        /** * Listening to Load All Provider click event* */
+        btnShowAllProviders.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View arg0)
+            {
+                Toast.makeText(getApplicationContext(), " show All Provider.. ", Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
         // LoadMore button
         btnLoadMore = new Button(this);
@@ -131,6 +148,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             }
         });
         listView.addFooterView(btnLoadMore);
+        listView.addFooterView(btnShowAllProviders);
         try
         {
             JSONObject jsonObject = new JSONObject(jsonData);
@@ -155,7 +173,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 businessAddress[i] = jsonObject1.getString("Provider First Line Business Practice Location Address");
                 PostalCode[i] = jsonObject1.getString("Provider Business Mailing Address Postal Code");
                 providerNpiID[i] = jsonObject1.getString("NPI");
-
             }
         } catch (Exception error)
         {
@@ -193,6 +210,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             {
                 firstMarkerPlot = 10;
             }
+            showingResult = firstMarkerPlot;
             for (int i = 0; i < firstMarkerPlot; i++)
             {
                 providerLatitude = Double.valueOf(sharedPrefClassObj.getLat()[i]);
@@ -207,7 +225,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 providerName=String.valueOf(firstName[i] + " " + lastName[i]);
                 providerAddress=String.valueOf(businessAddress[i]+" "+countryName[i]);
                 ProviderPostalCode=String.valueOf(PostalCode[i]);
-                npiId = String.valueOf(providerNpiID[i]);;
+                npiId = String.valueOf(providerNpiID[i]);
+
                 Marker markerBlack = map.addMarker(new MarkerOptions()
                         .position(new LatLng(providerLatitude, providerLongitude))
                         .title(providerName+" "+npiId)
@@ -247,10 +266,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 6));
 
         listView.setAdapter(new MyAdapter(this, dataHolder));
-        int resutl = listView.getAdapter().getCount();
-        resutl = resutl - 1;
-        showingResult =resutl;
-        CountListItem.setText(" "+resutl+" / "+totalResultCounted+" RESULTS");
+        CountListItem.setText(" "+showingResult+" / "+totalResultCounted+" RESULTS");
 
     }
 
@@ -461,6 +477,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                         loadMoreProviderLatLong(address);
                     }
                 }
+                showingResult = incrementValue;
             } catch (Exception error)
             {
                 Log.e(TAG, error.toString());
@@ -488,10 +505,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             dataHolder.providerNpiId    = providerNpiID;
 
             listView.setAdapter(new MyAdapter(getApplicationContext(), dataHolder));
-            int resutl = listView.getAdapter().getCount();
-            resutl = resutl - 1;
-            showingResult = resutl;
-            CountListItem.setText(" "+resutl+" / "+totalResultCounted+" RESULTS");
+            CountListItem.setText(" "+showingResult+" / "+totalResultCounted+" RESULTS");
 
             loadeMoreproviderMarler();
 
