@@ -38,10 +38,10 @@ import java.util.Map;
 public class SecondActivity extends FragmentActivity implements View.OnClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
 {
     SharedPreferenceClass sharedPrefClassObj;
-    private final String TAG = "SecondActivity ";
-    final String latLongURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
-    private App app;
-    private ListView listView;
+    String TAG = "SecondActivity ";
+    String latLongURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
+    public App app;
+    public ListView listView;
     public String jsonData;
     public String[] firstName;
     public String[] lastName;
@@ -57,7 +57,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     Double providerLatitude, providerLongitude;
     public String providerName,providerAddress,ProviderPostalCode, npiId;
     public TextView CountListItem;
-    public int alfaValue=0;
     Map<Integer, Integer> markerDetailsBlack = new HashMap<Integer, Integer>();
     Map<Integer, Integer> markerDetailsGreen = new HashMap<Integer, Integer>();
 
@@ -77,7 +76,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     Map<String, String> latLongHashMap = new HashMap<String, String>();
     Button btnLoadMore;
 
-    int totalResultCounted = 0, showingResult = 0, incrementKey, numberKey = 0;
+    int totalResultCounted = 0, showingResult = 0, numberKey = 0, alfaValue = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -115,7 +114,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         visibleMarkers.clear();
         visibleMarkersGreen.clear();
 
-        CountListItem=(TextView)findViewById(R.id.TextNoOfResults);
+        CountListItem = (TextView)findViewById(R.id.TextNoOfResults);
 
         // LoadMore button
         btnLoadMore = new Button(this);
@@ -233,6 +232,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
                 latLongHashMap.put("latitude" + numberKey, providerLatitude.toString());
                 latLongHashMap.put("longitude" + numberKey, providerLongitude.toString());
+                latLongHashMap.put("name" + numberKey, providerName+"");
+                latLongHashMap.put("address" + numberKey, providerAddress+"");
                 numberKey += 1;
 
             }
@@ -444,11 +445,9 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                     providerNpiID[i] = jsonObject1.getString("NPI");
 
                     //take first 5 digit of provider Zip code
-                    Log.d("under 1","aaaaaaa 1");
-                    incrementKey = showingResult;
+
                     if(i >= showingResult)
                     {
-                        Log.d("under if   ","under if  "+showingResult);
                         String pin = PostalCode[i].substring(0, Math.min(PostalCode[i].length(), 5));
 
                         String address = countryName[i] + "+" + businessAddress[i] + "+" + pin;
@@ -456,8 +455,10 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                         address = address.replace(" ","+");
                         Log.d("address final", address + " > "+numberKey);
 
+                        latLongHashMap.put("name" + numberKey, firstName[i]+" "+lastName[i]);
+                        latLongHashMap.put("address" + numberKey, address+"");
+
                         loadMoreProviderLatLong(address);
-                        incrementKey += 1;
                     }
                 }
             } catch (Exception error)
@@ -511,7 +512,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 Log.d("latLongHashMap loadeMoreproviderMarler data",latLongHashMap.toString()+"");
                 int markerPositionBlack = 0;
                 int markerPositionGreen = 0;
-                for (int loop = 0; loop < latLongHashMap.size() / 2; loop++)
+                for (int loop = 0; loop < latLongHashMap.size() / 4; loop++)
                 {
                     if (latLongHashMap.get("latitude" + loop) == null
                             || Double.valueOf(latLongHashMap.get("longitude" + loop)) == null)
@@ -532,8 +533,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
                         Marker markerBlack = map.addMarker(new MarkerOptions()
                                 .position(new LatLng(providerLatitude, providerLongitude))
-                                .title("row click "+loop)
-                                .snippet(" " )
+                                .title(String.valueOf(latLongHashMap.get("name" + loop))+" position > "+loop)
+                                .snippet(" "+String.valueOf(latLongHashMap.get("address" + loop))+" position > "+loop)
                                 .icon(IconMarkerplot));
                         visibleMarkers.put(loop, markerBlack);
                         String mBlack = markerBlack.getId();
@@ -544,8 +545,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
                         Marker markerGreen = map.addMarker(new MarkerOptions()
                                 .position(new LatLng(providerLatitude, providerLongitude))
-                                .title("row click "+loop)
-                                .snippet(" ")
+                                .title(String.valueOf(latLongHashMap.get("name" + loop))+" position > "+loop)
+                                .snippet(" "+String.valueOf(latLongHashMap.get("address" + loop))+" position > "+loop)
                                 .icon(IconMarkerplotgreen));
                         String mGreen = markerGreen.getId();
                         mGreen = mGreen.replace("m","");
@@ -603,7 +604,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         }
 
     }
-    /* ********************************************************************* */
+    /* ****** Custom BaseAdapter ****** */
     public class MyAdapter extends BaseAdapter
     {
         private String[] firstName;
