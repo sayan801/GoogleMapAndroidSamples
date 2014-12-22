@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -38,7 +39,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 {
     SharedPreferenceClass sharedPrefClassObj;
     private final String TAG = "SecondActivity ";
-
+    final String latLongURL = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
     private App app;
     private ListView listView;
     public String jsonData;
@@ -73,9 +74,10 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     GoogleMap map;
     HashMap<Integer, Marker> visibleMarkersGreen = new HashMap<Integer, Marker>();
     HashMap<Integer, Marker> visibleMarkers = new HashMap<Integer, Marker>();
+    Map<String, String> latLongHashMap = new HashMap<String, String>();
     Button btnLoadMore;
 
-    int totalResultCounted = 0, showingResult = 0;
+    int totalResultCounted = 0, showingResult = 0, incrementKey, numberKey = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -127,7 +129,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             public void onClick(View arg0)
             {
                 // Toast.makeText(getApplicationContext()," click load more ", Toast.LENGTH_SHORT).show();
-                loadMoreData();
+                //loadMoreData();
+                new loadMoreProviderAsyncTask().execute();
             }
         });
         listView.addFooterView(btnLoadMore);
@@ -180,6 +183,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             JSONObject jsonObject = new JSONObject(jsonData);
             JSONArray jsonArray = jsonObject.getJSONArray("npidata");
             map.clear();
+            latLongHashMap.clear();
             BitmapDescriptor IconMarkerplot = BitmapDescriptorFactory.fromResource(R.drawable.markerblack);
             BitmapDescriptor IconMarkerplotgreen = BitmapDescriptorFactory.fromResource(R.drawable.markerplotgreen);
             JSONObject jsonObject2;
@@ -228,6 +232,11 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 markerDetailsGreen.put(i, greenMarker);
                 visibleMarkersGreen.put(i, markerGreen);
                 visibleMarkersGreen.get(i).setVisible(false);
+
+                latLongHashMap.put("latitude" + numberKey, providerLatitude.toString());
+                latLongHashMap.put("longitude" + numberKey, providerLongitude.toString());
+                numberKey += 1;
+
             }
         }
         catch (JSONException error)
@@ -236,7 +245,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             error.printStackTrace();
         }
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 12));
+                new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 5));
 
         listView.setAdapter(new MyAdapter(this, dataHolder));
         int resutl = listView.getAdapter().getCount();
@@ -400,17 +409,34 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             visibleMarkersGreen.get(RowId).setVisible(true);
             //show marker Chata
             visibleMarkersGreen.get(RowId).showInfoWindow();
+
+            providerLatitude = Double.valueOf(latLongHashMap.get("latitude" + RowId));
+            providerLongitude = Double.valueOf(latLongHashMap.get("longitude" + RowId));
+
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 8));
         }
         catch (Exception ex){ }
     }
 
-    public void loadMoreData()
+    ///////////////////////////////////
+    private class loadMoreProviderAsyncTask extends AsyncTask<String , Void, Void>
     {
-        try
+        @Override
+        protected void onPreExecute()
         {
-            JSONObject jsonObject = new JSONObject(jsonData);
+            super.onPreExecute();
 
-            JSONArray jsonArray = jsonObject.getJSONArray("npidata");
+        }
+
+        @Override
+        protected Void doInBackground(String... url)
+        {
+            try
+            {
+                JSONObject jsonObject = new JSONObject(jsonData);
+
+                JSONArray jsonArray = jsonObject.getJSONArray("npidata");
 /*
             firstName = new String[jsonArray.length()];
             lastName = new String[jsonArray.length()];
@@ -419,63 +445,223 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             PostalCode = new String[jsonArray.length()];
             providerNpiID = new String[jsonArray.length()];
 */
-            int incrementValue, incrementWith = 10;
+                int incrementValue, incrementWith = 10;
 
-            if((showingResult+incrementWith) > totalResultCounted)
+                if((showingResult+incrementWith) > totalResultCounted)
+                {
+                    int remainingResult = (showingResult+incrementWith) - totalResultCounted;
+                    incrementValue = (showingResult+incrementWith) - remainingResult;
+                }
+                else
+                {
+                    incrementValue = (showingResult+incrementWith);
+                }
+
+                firstName = new String[incrementValue];
+                lastName = new String[incrementValue];
+                countryName = new String[incrementValue];
+                businessAddress = new String[incrementValue];
+                PostalCode = new String[incrementValue];
+                providerNpiID = new String[incrementValue];
+
+                JSONObject jsonObject1;
+                for( int i = 0; i < incrementValue; i++ )
+                {
+                    jsonObject1 = jsonArray.getJSONObject(i);
+
+                    firstName[i] = jsonObject1.getString("Provider First Name")+"positopn > "+i;
+                    lastName[i] = jsonObject1.getString("Provider Last Name");
+                    countryName[i] = jsonObject1.getString("Provider Business Mailing Address Country Code");
+                    businessAddress[i] = jsonObject1.getString("Provider First Line Business Practice Location Address");
+                    PostalCode[i] = jsonObject1.getString("Provider Business Mailing Address Postal Code");
+                    providerNpiID[i] = jsonObject1.getString("NPI");
+
+                    //take first 5 digit of provider Zip code
+                    Log.d("under 1","aaaaaaa 1");
+                    incrementKey = showingResult;
+                    if(i>=showingResult)
+                    {
+                        Log.d("under if   ","under if  "+showingResult);
+                        String pin = PostalCode[i].substring(0, Math.min(PostalCode[i].length(), 5));
+
+                        String address = countryName[i] + "+" + businessAddress[i] + "+" + pin;
+                        address = address.replace(" ","+");
+                        address = address.replace(" ","+");
+                        Log.d("address final", address + " > "+numberKey);
+
+                        loadMoreProviderLatLong(address);
+                        incrementKey += 1;
+                    }
+
+
+//                    latLongHashMap.put("latitude" + incrementKey, 38.961288+"");
+//                    latLongHashMap.put("longitude" + incrementKey, -94.663487+"");
+/*
+                    if(i>9)
+                    {
+                        try
+                        {
+                            //take first 5 digit of provider Zip code
+                            String pin = PostalCode[i].substring(0, Math.min(PostalCode[i].length(), 5));
+
+                            String address = countryName[i] + "+" + businessAddress[i] + "+" + pin;
+                            incrementKey=9;
+                            loadMoreProviderLatLong(address);
+
+                        } catch (Exception ex)
+                        {
+                            //
+                        }
+                    }
+*/
+
+                }
+            } catch (Exception error)
             {
-                int remainingResult = (showingResult+incrementWith) - totalResultCounted;
-                incrementValue = (showingResult+incrementWith) - remainingResult;
+                Log.e(TAG, error.toString());
+                error.printStackTrace();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result)
+        {
+            super.onPostExecute(result);
+            //data holder.
+            DataHolder dataHolder = new DataHolder();
+
+            dataHolder.firstName        = firstName;
+            dataHolder.lastName         = lastName;
+            dataHolder.businessAddress  = businessAddress;
+            dataHolder.countryName      = countryName;
+            dataHolder.lat              = lat;
+            dataHolder.lang             = lang;
+            dataHolder.PostalCode       = PostalCode;
+            dataHolder.providerNpiId    = providerNpiID;
+
+            listView.setAdapter(new MyAdapter(getApplicationContext(), dataHolder));
+            int resutl = listView.getAdapter().getCount();
+            resutl = resutl - 1;
+            showingResult = resutl;
+            CountListItem.setText(" "+resutl+" / "+totalResultCounted+" RESULTS");
+
+            loadeMoreproviderMarler();
+
+        }
+    }
+
+    /* ************ */
+    public  void loadeMoreproviderMarler()
+    {
+        try
+        {
+            BitmapDescriptor IconMarkerplot = BitmapDescriptorFactory.fromResource(R.drawable.markerblack);
+            BitmapDescriptor IconMarkerplotgreen = BitmapDescriptorFactory.fromResource(R.drawable.markerplotgreen);
+            map.clear();
+
+            if (latLongHashMap.size() > 0)
+            {
+                Log.d("latLongHashMap loadeMoreproviderMarler data",latLongHashMap.toString()+"");
+                int markerPositionBlack = 0;
+                int markerPositionGreen = 0;
+                for (int loop = 0; loop < latLongHashMap.size() / 2; loop++)
+                {
+                    if (latLongHashMap.get("latitude" + loop) == null
+                            || Double.valueOf(latLongHashMap.get("longitude" + loop)) == null)
+                    {
+                        //lat long not Found...
+                    }
+                    else
+                    {
+                        providerLatitude = Double.valueOf(latLongHashMap.get("latitude" + loop));
+                        providerLongitude = Double.valueOf(latLongHashMap.get("longitude" + loop));
+
+                        if(loop == 0)
+                        {
+//                            pd.dismiss();
+                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 8));
+                        }
+//                        providerName = latLongHashMap.get("name" + loop);
+//                        providerAddress = latLongHashMap.get("address" + loop);
+
+                        Marker markerBlack = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(providerLatitude, providerLongitude))
+                                .title("Ook"+loop)
+                                .snippet(" " )
+                                .icon(IconMarkerplot));
+                        visibleMarkers.put(loop, markerBlack);
+                        String mBlack = markerBlack.getId();
+                        mBlack = mBlack.replace("m","");
+                        final int blackMarker =  Integer.valueOf(mBlack);
+                        markerDetailsBlack.put(markerPositionBlack, blackMarker);
+                        markerPositionBlack++;
+
+                        Marker markerGreen = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(providerLatitude, providerLongitude))
+                                .title("Ok"+loop)
+                                .snippet(" ")
+                                .icon(IconMarkerplotgreen));
+                        String mGreen = markerGreen.getId();
+                        mGreen = mGreen.replace("m","");
+                        final int greenMarker =  Integer.valueOf(mGreen);
+                        markerDetailsGreen.put(markerPositionGreen, greenMarker);
+                        markerPositionGreen++;
+                        visibleMarkersGreen.put(loop, markerGreen);
+                        visibleMarkersGreen.get(loop).setVisible(false);
+                    }
+                }
+                // LayoutProgress.setVisibility(View.GONE);
             }
             else
             {
-                incrementValue = (showingResult+incrementWith);
+                ////errorDialogShow();
             }
 
-            firstName = new String[incrementValue];
-            lastName = new String[incrementValue];
-            countryName = new String[incrementValue];
-            businessAddress = new String[incrementValue];
-            PostalCode = new String[incrementValue];
-            providerNpiID = new String[incrementValue];
 
-            JSONObject jsonObject1;
-            for( int i = 0; i < incrementValue; i++ )
-            {
-                jsonObject1 = jsonArray.getJSONObject(i);
-
-                firstName[i] = jsonObject1.getString("Provider First Name");
-                lastName[i] = jsonObject1.getString("Provider Last Name");
-                countryName[i] = jsonObject1.getString("Provider Business Mailing Address Country Code");
-                businessAddress[i] = jsonObject1.getString("Provider First Line Business Practice Location Address");
-                PostalCode[i] = jsonObject1.getString("Provider Business Mailing Address Postal Code");
-                providerNpiID[i] = jsonObject1.getString("NPI");
-
-            }
-        } catch (Exception error)
+        }
+        catch (Exception ex){ }
+    }
+    /* **** */
+   public void loadMoreProviderLatLong(String address)
+    {
+        // Creating service handler class instance
+        ServiceHandler shCheckZipAsyncTask = new ServiceHandler();
+        // Making a request to url and getting response
+        String jsonStr = shCheckZipAsyncTask.makeServiceCall(latLongURL+address, ServiceHandler.GET);
+        Log.d("jsonStr data ",jsonStr);
+        try
         {
-            Log.e(TAG, error.toString());
-            error.printStackTrace();
+            JSONObject jsObject = new JSONObject(jsonStr);
+            JSONArray latlngArry = jsObject.getJSONArray("result");
+
+            JSONObject jsonObject = latlngArry.getJSONObject(0);
+
+            if (jsonObject.getString("status").equals("OK"))
+            {
+                providerLatitude = jsonObject.getDouble("latitude");
+                providerLongitude = jsonObject.getDouble("longitude");
+
+                latLongHashMap.put("latitude" + numberKey, providerLatitude.toString());
+                latLongHashMap.put("longitude" + numberKey, providerLongitude.toString());
+            }
+            else
+            {
+                latLongHashMap.put("latitude" + numberKey, null);
+                latLongHashMap.put("longitude" + numberKey, null);
+            }
+            numberKey += 1;
+        }
+        catch (Exception ex)
+        {
+
         }
 
-        //data holder.
-        DataHolder dataHolder = new DataHolder();
-
-        dataHolder.firstName        = firstName;
-        dataHolder.lastName         = lastName;
-        dataHolder.businessAddress  = businessAddress;
-        dataHolder.countryName      = countryName;
-        dataHolder.lat              = lat;
-        dataHolder.lang             = lang;
-        dataHolder.PostalCode       = PostalCode;
-        dataHolder.providerNpiId    = providerNpiID;
-
-        listView.setAdapter(new MyAdapter(this, dataHolder));
-        int resutl = listView.getAdapter().getCount();
-        resutl = resutl - 1;
-        showingResult = resutl;
-        CountListItem.setText(" "+resutl+" / "+totalResultCounted+" RESULTS");
     }
-    ///////////////////////////////////
+    /* ********************************************************************* */
     public class MyAdapter extends BaseAdapter
     {
         private String[] firstName;
