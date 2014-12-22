@@ -55,9 +55,9 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     public ImageView view;
 
     Double providerLatitude, providerLongitude;
-    public String providerName,providerAddress,ProviderPostalCode,CountListRowNo, npiId;
+    public String providerName,providerAddress,ProviderPostalCode, npiId;
     public TextView CountListItem;
-    public int alfaValue=0, listItemPotion = 0;
+    public int alfaValue=0;
     Map<Integer, Integer> markerDetailsBlack = new HashMap<Integer, Integer>();
     Map<Integer, Integer> markerDetailsGreen = new HashMap<Integer, Integer>();
 
@@ -243,28 +243,14 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             error.printStackTrace();
         }
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 5));
+                new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 6));
 
         listView.setAdapter(new MyAdapter(this, dataHolder));
         int resutl = listView.getAdapter().getCount();
         resutl = resutl - 1;
         showingResult =resutl;
         CountListItem.setText(" "+resutl+" / "+totalResultCounted+" RESULTS");
-/*
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View view, final int position, long id) {
-                zoomAddress(position);
-                final int rowItem = position;
-                LinearLayout ln = (LinearLayout) view.findViewById(R.id.linearLayoutProviderDetails);
-                ln.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(getApplicationContext(), String.valueOf(providerNpiID[rowItem]) + " Details row > " + rowItem, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });*/
+
     }
 
 
@@ -289,17 +275,14 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         {
             case R.id.linearLayoutProviderDetails:
                 int rowNo = Integer.parseInt(String.valueOf(view.getTag()));
-                Toast.makeText(getApplicationContext(), "goto next screen"+rowNo, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "goto next screen "+rowNo, Toast.LENGTH_SHORT).show();
 
                 break;
 
             case R.id.Markar_Icon:
-                int rowNo1 = Integer.parseInt(String.valueOf(view.getTag()));
-
                 try
                 {
-                    //String rowNo = String.valueOf(view.getTag());
-                    //listItemPotion = Integer.parseInt(rowNo);
+                    int rowNo1 = Integer.parseInt(String.valueOf(view.getTag()));
                     zoomAddress(rowNo1);
                     listView.performItemClick(listView.getAdapter().getView(rowNo1, null, null), rowNo1, listView.getItemIdAtPosition(rowNo1));
                 }
@@ -307,19 +290,14 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 break;
 
             case R.id.customCheckableLinearLayout:
-                int rowNo2 = Integer.parseInt(String.valueOf(view.getTag()));
-                //Toast.makeText(getApplicationContext(), "Details click row "+rowNo2, Toast.LENGTH_SHORT).show();
-                zoomAddress(rowNo2);
                 try
                 {
-                    //String rowNo = String.valueOf(view.getTag());
-                    //listItemPotion = Integer.parseInt(rowNo);
-                    zoomAddress(listItemPotion);
+                    int rowNo2 = Integer.parseInt(String.valueOf(view.getTag()));
+                    zoomAddress(rowNo2);
                     listView.performItemClick(listView.getAdapter().getView(rowNo2, null, null), rowNo2, listView.getItemIdAtPosition(rowNo2));
                 }
                 catch (Exception exMarkerClick){ }
                 break;
-
         }
     }
 
@@ -390,7 +368,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         // Event was handled by our code do not launch default behaviour.
         return true;
     }
-    // Plot/View only green marker
+    /* ******** Plot/View only green marker ******** */
     public  void  zoomAddress(int RowId)
     {
         try
@@ -412,12 +390,12 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             providerLongitude = Double.valueOf(latLongHashMap.get("longitude" + RowId));
 
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 8));
+                    new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 12));
         }
         catch (Exception ex){ }
     }
 
-    ///////////////////////////////////
+    /* ***** loadMoreProviderAsyncTask ******* */
     private class loadMoreProviderAsyncTask extends AsyncTask<String , Void, Void>
     {
         @Override
@@ -519,7 +497,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         }
     }
 
-    /* ************ */
+    /* ***** loadeMoreproviderMarler ******* */
     public  void loadeMoreproviderMarler()
     {
         try
@@ -554,7 +532,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
                         Marker markerBlack = map.addMarker(new MarkerOptions()
                                 .position(new LatLng(providerLatitude, providerLongitude))
-                                .title("Ook"+loop)
+                                .title("row click "+loop)
                                 .snippet(" " )
                                 .icon(IconMarkerplot));
                         visibleMarkers.put(loop, markerBlack);
@@ -566,7 +544,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
                         Marker markerGreen = map.addMarker(new MarkerOptions()
                                 .position(new LatLng(providerLatitude, providerLongitude))
-                                .title("Ok"+loop)
+                                .title("row click "+loop)
                                 .snippet(" ")
                                 .icon(IconMarkerplotgreen));
                         String mGreen = markerGreen.getId();
@@ -589,7 +567,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         }
         catch (Exception ex){ }
     }
-    /* **** */
+    /* **** loadMoreProviderLatLong **** */
    public void loadMoreProviderLatLong(String address)
     {
         // Creating service handler class instance
