@@ -128,8 +128,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             @Override
             public void onClick(View arg0)
             {
-                // Toast.makeText(getApplicationContext()," click load more ", Toast.LENGTH_SHORT).show();
-                //loadMoreData();
                 new loadMoreProviderAsyncTask().execute();
             }
         });
@@ -435,16 +433,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             try
             {
                 JSONObject jsonObject = new JSONObject(jsonData);
-
                 JSONArray jsonArray = jsonObject.getJSONArray("npidata");
-/*
-            firstName = new String[jsonArray.length()];
-            lastName = new String[jsonArray.length()];
-            countryName = new String[jsonArray.length()];
-            businessAddress = new String[jsonArray.length()];
-            PostalCode = new String[jsonArray.length()];
-            providerNpiID = new String[jsonArray.length()];
-*/
                 int incrementValue, incrementWith = 10;
 
                 if((showingResult+incrementWith) > totalResultCounted)
@@ -479,7 +468,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                     //take first 5 digit of provider Zip code
                     Log.d("under 1","aaaaaaa 1");
                     incrementKey = showingResult;
-                    if(i>=showingResult)
+                    if(i >= showingResult)
                     {
                         Log.d("under if   ","under if  "+showingResult);
                         String pin = PostalCode[i].substring(0, Math.min(PostalCode[i].length(), 5));
@@ -492,29 +481,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                         loadMoreProviderLatLong(address);
                         incrementKey += 1;
                     }
-
-
-//                    latLongHashMap.put("latitude" + incrementKey, 38.961288+"");
-//                    latLongHashMap.put("longitude" + incrementKey, -94.663487+"");
-/*
-                    if(i>9)
-                    {
-                        try
-                        {
-                            //take first 5 digit of provider Zip code
-                            String pin = PostalCode[i].substring(0, Math.min(PostalCode[i].length(), 5));
-
-                            String address = countryName[i] + "+" + businessAddress[i] + "+" + pin;
-                            incrementKey=9;
-                            loadMoreProviderLatLong(address);
-
-                        } catch (Exception ex)
-                        {
-                            //
-                        }
-                    }
-*/
-
                 }
             } catch (Exception error)
             {
@@ -585,8 +551,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                             map.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 8));
                         }
-//                        providerName = latLongHashMap.get("name" + loop);
-//                        providerAddress = latLongHashMap.get("address" + loop);
 
                         Marker markerBlack = map.addMarker(new MarkerOptions()
                                 .position(new LatLng(providerLatitude, providerLongitude))
