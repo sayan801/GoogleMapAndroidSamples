@@ -558,7 +558,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                             map.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 8));
                         }
-
+                        String providerAddress = String.valueOf(latLongHashMap.get("address" + loop));
                         Marker markerBlack = map.addMarker(new MarkerOptions()
                                 .position(new LatLng(providerLatitude, providerLongitude))
                                 .title(String.valueOf(latLongHashMap.get("name" + loop))+" position > "+loop)
