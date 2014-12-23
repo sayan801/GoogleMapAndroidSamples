@@ -157,23 +157,21 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             JSONObject jsonObject = new JSONObject(jsonData);
 
             JSONArray jsonArray = jsonObject.getJSONArray("npidata");
+            totalResultCounted = jsonArray.length();
 
             int showFirstValue = 10;
             if(jsonArray.length() < 10)
-            {
                 showFirstValue = jsonArray.length();
-            }
             else
-            {
                 showFirstValue = 10;
-            }
+
             firstName = new String[showFirstValue];
             lastName = new String[showFirstValue];
             countryName = new String[showFirstValue];
             businessAddress = new String[showFirstValue];
             PostalCode = new String[showFirstValue];
             providerNpiID = new String[showFirstValue];
-            totalResultCounted = jsonArray.length();
+
             JSONObject jsonObject1;
             for( int i = 0; i < showFirstValue; i++ )
             {
@@ -266,7 +264,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 latLongHashMap.put("name" + numberKey, providerName+"");
                 latLongHashMap.put("address" + numberKey, providerAddress+"");
                 numberKey += 1;
-
             }
         }
         catch (Exception error)  {  }
@@ -281,11 +278,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             listView.removeFooterView(btnShowAllProviders);
             btnLoadMore.setText("End of Providers");
         }
-
-
-
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -309,7 +302,6 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             case R.id.linearLayoutProviderDetails:
                 int rowNo = Integer.parseInt(String.valueOf(view.getTag()));
                 Toast.makeText(getApplicationContext(), "goto next screen "+rowNo, Toast.LENGTH_SHORT).show();
-
                 break;
 
             case R.id.Markar_Icon:
@@ -634,22 +626,20 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             }
             numberKey += 1;
         }
-        catch (Exception ex)
-        {
-
-        }
+        catch (Exception ex)  {  }
 
     }
     /* ****** Custom BaseAdapter ****** */
     public class MyAdapter extends BaseAdapter
     {
+        ViewHolder holder =  new ViewHolder(); // Global declare
+        View leftPart, rightPart, leftPart2; // Global declare
+
         private String[] firstName;
         private String[] lastName;
         private Context context;
         private String[] countryName;
         private String[] businessAddress;
-        private String[] lat;
-        private String[] lang;
 
         public MyAdapter(Context context, DataHolder holder)
         {
@@ -658,63 +648,55 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             this.lastName = holder.lastName;
             this.countryName = holder.countryName;
             this.businessAddress = holder.businessAddress;
-            /*this.lat = holder.lat;
-            this.lang = holder.lang;*/
-
         }
 
         @Override
-        public int getCount() {
+        public int getCount()
+        {
             return firstName.length;
         }
 
         @Override
-        public Object getItem(int position) {
+        public Object getItem(int position)
+        {
             return position;
         }
 
         @Override
-        public long getItemId(int position) {
+        public long getItemId(int position)
+        {
             return position;
         }
 
-        ViewHolder holder =  new ViewHolder();;
         @SuppressLint("InflateParams")
         @Override
         public View getView(int position, View convertView, ViewGroup parent)
         {
             LayoutInflater inflater = LayoutInflater.from(context);
 
-
             convertView = inflater.inflate(R.layout.listview_item, null);
             holder.FirstName = (TextView) convertView.findViewById(R.id.tv_headLn);
 
-            View leftPart =  convertView.findViewById(R.id.Markar_Icon);
+            leftPart =  convertView.findViewById(R.id.Markar_Icon);
             leftPart.setTag(position);
             leftPart.setOnClickListener(SecondActivity.this);
 
-            View leftPart2 =  convertView.findViewById(R.id.customCheckableLinearLayout);
+            leftPart2 =  convertView.findViewById(R.id.customCheckableLinearLayout);
             leftPart2.setTag(position);
             leftPart2.setOnClickListener(SecondActivity.this);
 
-            View rightPart =  convertView.findViewById(R.id.linearLayoutProviderDetails);
+            rightPart =  convertView.findViewById(R.id.linearLayoutProviderDetails);
             rightPart.setTag(position);
             rightPart.setOnClickListener(SecondActivity.this);
 
             holder.LastName = (TextView) convertView.findViewById(R.id.tv_dateLn);
             holder.CountryName = (TextView) convertView.findViewById(R.id.tv_country);
             holder.BusinessAddress = (TextView) convertView.findViewById(R.id.tv_business);
-            /*holder.Lat = (TextView) convertView.findViewById(R.id.Txt_Lat);
-            holder.Lang = (TextView) convertView.findViewById(R.id.Txt_Long);*/
-            //tag the holder object to the convert view so that the object can recycle every time.
-            //convertView.setTag(holder);
-Log.d("calling adapter > ",position+" ");
             holder.FirstName.setText(firstName[position]);
             holder.LastName.setText(lastName[position]);
             holder.CountryName.setText(countryName[position]);
             holder.BusinessAddress.setText(businessAddress[position]);
-            /*holder.Lat.setText(lat[position]+" ");
-            holder.Lang.setText(lang[position]+" ");*/
+
             return convertView;
         }
     }
@@ -725,7 +707,5 @@ Log.d("calling adapter > ",position+" ");
         TextView LastName;
         TextView CountryName;
         TextView BusinessAddress;
-        /*TextView Lat;
-        TextView Lang;*/
     }
 }
