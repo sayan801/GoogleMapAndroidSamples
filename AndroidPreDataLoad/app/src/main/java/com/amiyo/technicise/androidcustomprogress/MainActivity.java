@@ -27,7 +27,7 @@ public class MainActivity extends Activity
     private final String TAG = "CustomProgressBarActivity";
 
     /** * URl to parse the json array object  */
-    final String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/john/66213/5";
+    final String url ="http://curatehealth.net:81/webservice/sayan801/code/index.php?/provider/getProviderInfoByPartialNameZipDistance/Davis/66213/10";
     final String address = "http://curatehealth.net:81/webservice/sayan801/code/index.php?/geocoding/getLatLongFromAddress/";
 
     App app;
@@ -144,10 +144,6 @@ public class MainActivity extends Activity
             sharedPrefClassObj.setJSONData(jsonResponse);
             JSONObject jsonObject = new JSONObject(jsonData);
             JSONArray jsonArray = jsonObject.getJSONArray("npidata");
-
-            sharedPrefClassObj.setLat(jsonArray.length());
-            sharedPrefClassObj.setLang(jsonArray.length());
-            Log.d("total result > ",jsonArray.length()+" ");
             int firstMarkerPlot = 10;
             if(jsonArray.length() < 10)
             {
@@ -157,6 +153,10 @@ public class MainActivity extends Activity
             {
                 firstMarkerPlot = 10;
             }
+            sharedPrefClassObj.setLat(jsonArray.length());
+            sharedPrefClassObj.setLang(jsonArray.length());
+            Log.d("total result > ",jsonArray.length()+" ");
+
             for (int i = 0; i < firstMarkerPlot; i++)
             {
                 String[] lat_lang = getLatLong(jsonArray.getJSONObject(i));
