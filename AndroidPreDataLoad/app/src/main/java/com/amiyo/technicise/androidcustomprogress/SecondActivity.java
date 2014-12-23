@@ -63,7 +63,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     /** * @param context * @param dipValue * @return  */
     public static int dip2px(Context context, float dipValue)
     {
-        if (context == null) {
+        if (context == null)
+        {
             return (int) dipValue;
         }
         final float scale = context.getResources().getDisplayMetrics().density;
@@ -95,7 +96,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         view.setPadding(20, 0, 0, 0);
 
         TextView TvActionbarTitle = (TextView) findViewById(R.id.TvActionBarTitle);
-        TvActionbarTitle.setText("PROVIDER DETAILS");
+        TvActionbarTitle.setText("PROVIDER");
         TvActionbarTitle.setTextColor(Color.parseColor("#FFFFFF"));
 
         app = (App) getApplication();
@@ -128,7 +129,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             @Override
             public void onClick(View arg0)
             {
-                Toast.makeText(getApplicationContext(), " show All Provider.. ", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), " show All Provider.. ", Toast.LENGTH_SHORT).show();
+                new loadMoreProviderAsyncTask().execute("showAllProviders");
 
             }
         });
@@ -144,7 +146,11 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             @Override
             public void onClick(View arg0)
             {
-                new loadMoreProviderAsyncTask().execute();
+                if(showingResult < totalResultCounted)
+                    new loadMoreProviderAsyncTask().execute("loadMoreProvider");
+                else
+                    Toast.makeText(getApplicationContext(), "No more provider available", Toast.LENGTH_SHORT).show();
+
             }
         });
         listView.addFooterView(btnLoadMore);
@@ -201,17 +207,17 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             BitmapDescriptor IconMarkerplot = BitmapDescriptorFactory.fromResource(R.drawable.markerblack);
             BitmapDescriptor IconMarkerplotgreen = BitmapDescriptorFactory.fromResource(R.drawable.markerplotgreen);
             JSONObject jsonObject2;
-            int firstMarkerPlot = 10;
+            int firstLoadDataAndPlotMarker = 10;
             if(jsonArray.length() < 10)
             {
-                firstMarkerPlot = jsonArray.length();
+                firstLoadDataAndPlotMarker = jsonArray.length();
             }
             else
             {
-                firstMarkerPlot = 10;
+                firstLoadDataAndPlotMarker = 10;
             }
-            showingResult = firstMarkerPlot;
-            for (int i = 0; i < firstMarkerPlot; i++)
+            showingResult = firstLoadDataAndPlotMarker;
+            for (int i = 0; i < firstLoadDataAndPlotMarker; i++)
             {
                 providerLatitude = Double.valueOf(sharedPrefClassObj.getLat()[i]);
                 providerLongitude = Double.valueOf(sharedPrefClassObj.getLang()[i]);
@@ -257,13 +263,9 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
             }
         }
-        catch (JSONException error)
-        {
-            Log.e(TAG, error.toString());
-            error.printStackTrace();
-        }
+        catch (Exception error)  {  }
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 6));
+                new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 8));
 
         listView.setAdapter(new MyAdapter(this, dataHolder));
         CountListItem.setText(" "+showingResult+" / "+totalResultCounted+" RESULTS");
@@ -431,6 +433,12 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 JSONArray jsonArray = jsonObject.getJSONArray("npidata");
                 int incrementValue, incrementWith = 10;
 
+                if(url[0] == "showAllProviders")
+                {
+                    incrementWith = totalResultCounted; // will display ALL providers
+                    //listView.removeFooterView(btnShowAllProviders);
+                }
+
                 if((showingResult+incrementWith) > totalResultCounted)
                 {
                     int remainingResult = (showingResult+incrementWith) - totalResultCounted;
@@ -478,13 +486,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                     }
                 }
                 showingResult = incrementValue;
-            } catch (Exception error)
-            {
-                Log.e(TAG, error.toString());
-                error.printStackTrace();
             }
-
-
+            catch (Exception error)  {  }
             return null;
         }
 
@@ -507,13 +510,16 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             listView.setAdapter(new MyAdapter(getApplicationContext(), dataHolder));
             CountListItem.setText(" "+showingResult+" / "+totalResultCounted+" RESULTS");
 
-            loadeMoreproviderMarler();
+            if(showingResult >= totalResultCounted)
+                listView.removeFooterView(btnShowAllProviders);
+
+            rePlotMarker();
 
         }
     }
 
-    /* ***** loadeMoreproviderMarler ******* */
-    public  void loadeMoreproviderMarler()
+    /* ***** rePlotMarker ******* */
+    public void rePlotMarker()
     {
         try
         {
@@ -523,9 +529,8 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
 
             if (latLongHashMap.size() > 0)
             {
-                Log.d("latLongHashMap loadeMoreproviderMarler data",latLongHashMap.toString()+"");
-                int markerPositionBlack = 0;
-                int markerPositionGreen = 0;
+                Log.d("latLongHashMap rePlotMarker data",latLongHashMap.toString()+"");
+                int markerPositionBlack = 0, markerPositionGreen = 0;
                 for (int loop = 0; loop < latLongHashMap.size() / 4; loop++)
                 {
                     if (latLongHashMap.get("latitude" + loop) == null
