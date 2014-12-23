@@ -157,7 +157,16 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             JSONObject jsonObject = new JSONObject(jsonData);
 
             JSONArray jsonArray = jsonObject.getJSONArray("npidata");
+
             int showFirstValue = 10;
+            if(jsonArray.length() < 10)
+            {
+                showFirstValue = jsonArray.length();
+            }
+            else
+            {
+                showFirstValue = 10;
+            }
             firstName = new String[showFirstValue];
             lastName = new String[showFirstValue];
             countryName = new String[showFirstValue];
