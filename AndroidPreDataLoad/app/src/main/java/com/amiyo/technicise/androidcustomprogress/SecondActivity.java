@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,6 +76,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
     HashMap<Integer, Marker> visibleMarkers = new HashMap<Integer, Marker>();
     Map<String, String> latLongHashMap = new HashMap<String, String>();
     Button btnLoadMore, btnShowAllProviders;
+    LinearLayout LayoutProgress;
 
     int totalResultCounted = 0, showingResult = 0, numberKey = 0, alfaValue = 0;
     @Override
@@ -104,6 +106,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         lat = sharedPrefClassObj.getLat();
         lang = sharedPrefClassObj.getLang();
 
+        LayoutProgress = (LinearLayout)findViewById(R.id.LayoutProgress);
         listView = (ListView) findViewById(R.id.listViewProviderSearchResults);
 
         map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapProviderSearchResult)).getMap();
@@ -438,7 +441,7 @@ if(i==0)
         protected void onPreExecute()
         {
             super.onPreExecute();
-
+            LayoutProgress.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -512,6 +515,7 @@ if(i==0)
         protected void onPostExecute(Void result)
         {
             super.onPostExecute(result);
+            LayoutProgress.setVisibility(View.GONE);
             //data holder.
             DataHolder dataHolder = new DataHolder();
 
