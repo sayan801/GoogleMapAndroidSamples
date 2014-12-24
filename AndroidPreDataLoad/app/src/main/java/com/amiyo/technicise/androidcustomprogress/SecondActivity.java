@@ -6,7 +6,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -105,6 +107,12 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
         listView = (ListView) findViewById(R.id.listViewProviderSearchResults);
 
         map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapProviderSearchResult)).getMap();
+/*
+        FragmentManager fmanager = getSupportFragmentManager();
+        Fragment fragment = fmanager.findFragmentById(R.id.mapProviderSearchResult);
+        SupportMapFragment supportmapfragment = (SupportMapFragment)fragment;
+        map = supportmapfragment.getMap();
+*/
         map.setOnMarkerClickListener(this);
         map.setOnInfoWindowClickListener(this);
         map.setPadding(0, 0, 0, 50); //Zoom in-Out Button will be Visible properly
@@ -258,7 +266,11 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
                 markerDetailsGreen.put(i, greenMarker);
                 visibleMarkersGreen.put(i, markerGreen);
                 visibleMarkersGreen.get(i).setVisible(false);
-
+if(i==0)
+{
+    map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+            new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 8));
+}
                 latLongHashMap.put("latitude" + numberKey, providerLatitude.toString());
                 latLongHashMap.put("longitude" + numberKey, providerLongitude.toString());
                 latLongHashMap.put("name" + numberKey, providerName+"");
@@ -267,8 +279,7 @@ public class SecondActivity extends FragmentActivity implements View.OnClickList
             }
         }
         catch (Exception error)  {  }
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(providerLatitude - 0.03, providerLongitude + 0.001), 8));
+
 
         listView.setAdapter(new MyAdapter(this, dataHolder));
         CountListItem.setText(" "+showingResult+" / "+totalResultCounted+" RESULTS");
