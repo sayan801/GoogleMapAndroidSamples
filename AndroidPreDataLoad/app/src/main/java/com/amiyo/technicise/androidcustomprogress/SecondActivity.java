@@ -315,7 +315,7 @@ if(i==0)
         {
             case R.id.linearLayoutProviderDetails:
                 int rowNo = Integer.parseInt(String.valueOf(view.getTag()));
-                Toast.makeText(getApplicationContext(), "goto next screen "+rowNo, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), rowNo+ " row "+"Npi ID > "+String.valueOf(providerNpiID[rowNo]), Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.Markar_Icon:

@@ -35,7 +35,7 @@ public class MainActivity extends Activity
     SharedPreferenceClass sharedPrefClassObj;
 
     // flag for Internet connection status
-    Boolean isInternetPresent = false;
+    Boolean isInternetPresent = false, foundData = false;
     // Connection detector class
     ConnectionDetector cd;
 
@@ -43,10 +43,10 @@ public class MainActivity extends Activity
 
     public Button BtnLoad;
     public ProgressBar MyProgressBar;
-    public String jsonResponse,jsonData,callAddress,provideraddress;
+    public String jsonResponse, jsonData, callAddress, provideraddress;
 
-    public String ProviderFirstLineBusinessMailingAddress,ProviderBusinessMailingAddressCityName,ProviderBusinessMailingAddressStateName,
-            ProviderBusinessMailingAddressPostalCode,ProviderSecondLineBusinessMailingAddress, npiID;
+    public String ProviderFirstLineBusinessMailingAddress, ProviderBusinessMailingAddressCityName, ProviderBusinessMailingAddressStateName,
+            ProviderBusinessMailingAddressPostalCode, ProviderSecondLineBusinessMailingAddress;
 
     public JSONArray jsonLatLongArray;
     public JSONObject jsonObjectLatLng;
@@ -83,7 +83,6 @@ public class MainActivity extends Activity
 
         // creating connection detector class instance
         cd = new ConnectionDetector(getApplicationContext());
-
     }
 
     public void LoadingData(View i)
@@ -96,7 +95,6 @@ public class MainActivity extends Activity
         else
             Toast.makeText(getApplicationContext(), "Connection Unavailable",Toast.LENGTH_SHORT).show();
     }
-
 
     /**
      * Private Class for Parsing the JSON over the Internet.
@@ -118,6 +116,7 @@ public class MainActivity extends Activity
 
             // Making a request to url and getting the response
             jsonResponse = serviceHandler.makeServiceCall(url, ServiceHandler.GET);
+            Log.d("jsonResponse >",jsonResponse+"");
             parseLatLang(jsonResponse);
             return null;
         }
@@ -126,13 +125,18 @@ public class MainActivity extends Activity
         protected void onPostExecute(Void result)
         {
             MyProgressBar.setVisibility(View.GONE);
-
             app.setDataLoadOnListView(sharedPrefClassObj);
 
-            //Fire an Intent.
-            Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
-            intent.setAction(SharedPreferenceClass.INTENT_ACTION_OPEN);
-            startActivity(intent);
+            if(foundData)
+            {
+                Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
+                intent.setAction(SharedPreferenceClass.INTENT_ACTION_OPEN);
+                startActivity(intent);
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(),"Data not Found",Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -144,6 +148,14 @@ public class MainActivity extends Activity
             sharedPrefClassObj.setJSONData(jsonResponse);
             JSONObject jsonObject = new JSONObject(jsonData);
             JSONArray jsonArray = jsonObject.getJSONArray("npidata");
+
+            Log.d("jsonArray.length() >",jsonArray.length()+"");
+
+            if(jsonArray.length() < 1)
+                foundData = false;
+            else
+                foundData = true;
+
             int firstMarkerPlot = 10;
             if(jsonArray.length() < 10)
             {
